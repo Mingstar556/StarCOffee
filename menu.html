@@ -33,7 +33,7 @@
   <style>
     body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #1b1412; color: #fcf8f2; overflow-x: hidden; }
     .glass { background: rgba(44, 34, 30, 0.75); backdrop-filter: blur(16px); border: 1px solid rgba(200, 138, 88, 0.2); transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
-    .glass:hover { border-color: rgba(200, 138, 88, 0.4); transform: translateY(-4px); box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
+    .glass:hover { border-color: rgba(200, 138, 88, 0.4); transform: translateY(-6px); box-shadow: 0 25px 50px rgba(0,0,0,0.5); }
 
     /* Preloader */
     #preloader {
@@ -236,9 +236,9 @@
     </div>
   </div>
 
-  <!-- Dynamic Menu Grid -->
+  <!-- Dynamic Menu Grid with Picture on Top & Name Below + Scroll Fade-Up Animation -->
   <section class="pb-28 px-6 max-w-7xl mx-auto">
-    <div id="menu-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8">
+    <div id="menu-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
       <!-- Dynamically rendered via js/menu-data.js -->
     </div>
   </section>
@@ -425,7 +425,7 @@
       }
     });
 
-    // Dynamic Menu Rendering & Filtering
+    // Dynamic Menu Rendering & Filtering with Picture on Top & Scroll Fade-Up Animation
     let currentCategory = 'all';
 
     function renderMenuGrid() {
@@ -440,30 +440,48 @@
       });
 
       if (filtered.length === 0) {
-        menuGrid.innerHTML = `<div class="col-span-2 text-center py-16 text-warmgray">No coffee or pastry items found matching your criteria.</div>`;
+        menuGrid.innerHTML = `<div class="col-span-full text-center py-16 text-warmgray">No coffee or pastry items found matching your criteria.</div>`;
         return;
       }
 
       menuGrid.innerHTML = filtered.map(item => `
-        <div class="menu-item glass p-6 rounded-3xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 hover:border-amber/40 transition-all duration-300 group hover:-translate-y-1 overflow-hidden" data-category="${item.category}" data-name="${item.name.toLowerCase()}">
-          <div class="space-y-2 flex-1">
-            <div class="flex items-center gap-3">
-              <h3 class="font-serif text-2xl font-bold group-hover:text-amber transition-colors">${item.name}</h3>
-              ${item.badge ? `<span class="px-2.5 py-0.5 rounded-full bg-amber/10 text-amber text-xs font-bold">${item.badge}</span>` : ''}
-            </div>
-            <p class="text-warmgray text-sm leading-relaxed">${item.description}</p>
-            <div class="text-amber font-serif font-bold text-xl">$${item.price.toFixed(2)}</div>
+        <div class="menu-item glass rounded-3xl overflow-hidden group hover:border-amber/40 transition-all duration-500 hover:-translate-y-2 flex flex-col justify-between" data-category="${item.category}" data-name="${item.name.toLowerCase()}">
+          <div class="h-60 overflow-hidden relative">
+            <img src="${item.image || 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?q=80&w=800&auto=format&fit=crop'}" alt="${item.name}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+            ${item.badge ? `<span class="absolute top-4 right-4 glass px-3 py-1 rounded-full text-xs font-bold text-amber shadow-lg">${item.badge}</span>` : ''}
           </div>
-          <button onclick="addToCart('${item.name.replace(/'/g, "\\'")}', ${item.price})" class="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-amber/10 text-amber font-semibold hover:bg-amber hover:text-espresso transition-all duration-300 shadow-lg shrink-0 active:scale-95">
-            Add to Order
-          </button>
+          <div class="p-6 space-y-4 flex-1 flex flex-col justify-between">
+            <div class="space-y-2">
+              <div class="flex justify-between items-baseline gap-2">
+                <h3 class="font-serif text-2xl font-bold group-hover:text-amber transition-colors">${item.name}</h3>
+                <span class="text-amber font-serif font-bold text-xl">$${item.price.toFixed(2)}</span>
+              </div>
+              <p class="text-warmgray text-sm leading-relaxed">${item.description}</p>
+            </div>
+            <button onclick="addToCart('${item.name.replace(/'/g, "\\'")}', ${item.price})" class="w-full py-3.5 rounded-xl bg-amber/10 text-amber font-semibold hover:bg-amber hover:text-espresso transition-all duration-300 shadow-md active:scale-95">
+              Add to Order
+            </button>
+          </div>
         </div>
       `).join('');
 
-      // Animate rendered items with GSAP
+      // Animate rendered items with GSAP ScrollTrigger Fade-Up
       const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       if (!prefersReduced) {
-        gsap.fromTo('.menu-item', { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.4, stagger: 0.05, ease: 'power3.out' });
+        gsap.fromTo('.menu-item', {
+          opacity: 0,
+          y: 50
+        }, {
+          scrollTrigger: {
+            trigger: '#menu-grid',
+            start: 'top 85%'
+          },
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          stagger: 0.1,
+          ease: 'power3.out'
+        });
       }
     }
 
@@ -485,23 +503,23 @@
     // Initial render
     renderMenuGrid();
 
-    // GSAP ScrollTrigger Animations
+    // GSAP ScrollTrigger Animations for Header & Filters
     const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (!prefersReduced) {
       gsap.registerPlugin(ScrollTrigger);
 
       gsap.from('.menu-header-section > *', {
         opacity: 0,
-        y: 30,
-        duration: 0.6,
+        y: 40,
+        duration: 0.8,
         stagger: 0.15,
         ease: 'power3.out'
       });
 
       gsap.from('.filter-bar', {
         opacity: 0,
-        y: 20,
-        duration: 0.6,
+        y: 30,
+        duration: 0.8,
         delay: 0.2,
         ease: 'power3.out'
       });
