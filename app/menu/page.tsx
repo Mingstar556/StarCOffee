@@ -405,7 +405,9 @@ export default function MenuPage() {
                       <button
                         onClick={() => {
                           setCart((prev) =>
-                            prev.map((i) => (i.id === item.id ? { ...i, qty: Math.max(1, i.qty - 1) } : i))
+                            prev
+                              .map((i) => (i.id === item.id ? { ...i, qty: i.qty - 1 } : i))
+                              .filter((i) => i.qty > 0)
                           );
                         }}
                         className="w-7 h-7 rounded-lg glass flex items-center justify-center text-xs"
