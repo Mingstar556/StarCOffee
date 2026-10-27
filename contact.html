@@ -6,6 +6,7 @@
   <title>Location & Contact — Star Coffee</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
   <script src="https://unpkg.com/@studio-freight/lenis@1.0.29/dist/lenis.min.js"></script>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap">
   <script>
@@ -31,16 +32,20 @@
   </script>
   <style>
     body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #1b1412; color: #fcf8f2; overflow-x: hidden; }
-    .glass { background: rgba(44, 34, 30, 0.75); backdrop-filter: blur(12px); border: 1px solid rgba(200, 138, 88, 0.2); }
+    .glass { background: rgba(44, 34, 30, 0.75); backdrop-filter: blur(16px); border: 1px solid rgba(200, 138, 88, 0.2); }
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: #1b1412; }
+    ::-webkit-scrollbar-thumb { background: #2c221e; border-radius: 4px; border: 2px solid #1b1412; }
+    ::-webkit-scrollbar-thumb:hover { background: #c88a58; }
   </style>
 </head>
 <body class="bg-espresso text-cream antialiased selection:bg-amber selection:text-espresso">
 
   <!-- Navigation -->
-  <header class="fixed top-0 left-0 right-0 z-50 px-6 py-4">
-    <nav class="max-w-7xl mx-auto glass rounded-2xl px-6 py-4 flex items-center justify-between">
+  <header class="fixed top-0 left-0 right-0 z-50 px-6 py-4 transition-all duration-300" id="navbar">
+    <nav class="max-w-7xl mx-auto glass rounded-2xl px-6 py-4 flex items-center justify-between shadow-2xl">
       <a href="index.html" class="flex items-center gap-3 group">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber to-gold flex items-center justify-center text-espresso font-serif font-bold text-xl shadow-lg shadow-amber/20">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber to-gold flex items-center justify-center text-espresso font-serif font-bold text-xl shadow-lg shadow-amber/20 group-hover:scale-105 transition-transform">
           ★
         </div>
         <span class="font-serif text-2xl font-bold tracking-tight text-cream">Star Coffee</span>
@@ -51,7 +56,11 @@
         <a href="contact.html" class="text-cream font-semibold transition-colors">Location & Contact</a>
       </div>
       <div class="flex items-center gap-4">
-        <a href="menu.html" class="hidden sm:inline-flex items-center justify-center px-5 py-2.5 rounded-xl bg-amber text-espresso font-semibold text-sm hover:bg-gold transition-colors shadow-lg shadow-amber/20">
+        <button id="cart-toggle-btn" class="relative p-2.5 rounded-xl glass hover:border-amber/50 transition-colors flex items-center justify-center text-cream">
+          <svg class="w-5 h-5 text-amber" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+          <span id="cart-badge" class="absolute -top-1.5 -right-1.5 w-5 h-5 bg-amber text-espresso text-xs font-bold rounded-full flex items-center justify-center shadow-md scale-0 transition-transform duration-300">0</span>
+        </button>
+        <a href="menu.html" class="hidden sm:inline-flex items-center justify-center px-5 py-2.5 rounded-xl bg-amber text-espresso font-semibold text-sm hover:bg-gold transition-all shadow-lg shadow-amber/20 hover:scale-105">
           Order Online
         </a>
         <button id="menu-btn" class="md:hidden w-10 h-10 rounded-xl glass flex flex-col items-center justify-center gap-1.5 focus:outline-none">
@@ -63,11 +72,44 @@
   </header>
 
   <!-- Mobile Menu Drawer -->
-  <div id="mobile-menu" class="fixed inset-0 z-40 bg-espresso/95 backdrop-blur-xl flex flex-col items-center justify-center gap-8 text-2xl font-serif translate-x-full transition-transform duration-300 md:hidden">
+  <div id="mobile-menu" class="fixed inset-0 z-40 bg-espresso/95 backdrop-blur-2xl flex flex-col items-center justify-center gap-8 text-2xl font-serif translate-x-full transition-transform duration-300 md:hidden">
     <a href="index.html" class="text-warmgray hover:text-cream">Home</a>
     <a href="menu.html" class="text-warmgray hover:text-cream">Menu</a>
     <a href="contact.html" class="text-amber">Location & Contact</a>
-    <a href="menu.html" class="px-8 py-3 rounded-xl bg-amber text-espresso font-sans font-semibold text-base">Order Online</a>
+    <a href="menu.html" class="px-8 py-3 rounded-xl bg-amber text-espresso font-sans font-semibold text-base shadow-lg shadow-amber/20">Order Online</a>
+  </div>
+
+  <!-- Shopping Cart Slide-over Drawer -->
+  <div id="cart-drawer" class="fixed inset-y-0 right-0 z-50 w-full sm:w-96 bg-espresso/95 backdrop-blur-2xl border-l border-amber/20 p-6 flex flex-col translate-x-full transition-transform duration-300 shadow-2xl">
+    <div class="flex items-center justify-between pb-6 border-b border-coffee">
+      <div class="flex items-center gap-2">
+        <span class="text-2xl">🛒</span>
+        <h3 class="font-serif text-xl font-bold">Your Order</h3>
+      </div>
+      <button id="cart-close-btn" class="w-9 h-9 rounded-xl glass flex items-center justify-center text-warmgray hover:text-cream">✕</button>
+    </div>
+    <div id="cart-items-container" class="flex-1 overflow-y-auto py-6 space-y-4">
+      <div class="text-center text-warmgray py-12">Your cart is currently empty.</div>
+    </div>
+    <div id="cart-footer" class="pt-6 border-t border-coffee space-y-4 hidden">
+      <div class="flex justify-between text-sm text-warmgray">
+        <span>Subtotal</span>
+        <span id="cart-subtotal" class="font-bold text-cream">$0.00</span>
+      </div>
+      <div class="flex justify-between text-lg font-serif font-bold text-cream">
+        <span>Total</span>
+        <span id="cart-total" class="text-amber">$0.00</span>
+      </div>
+      <button id="checkout-btn" class="w-full py-4 rounded-xl bg-amber text-espresso font-semibold hover:bg-gold transition-all shadow-lg shadow-amber/20">
+        Proceed to Checkout
+      </button>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="fixed bottom-6 right-6 z-50 glass px-6 py-3 rounded-2xl shadow-2xl border border-amber/40 text-sm font-medium flex items-center gap-3 translate-y-20 opacity-0 transition-all duration-300">
+    <span class="text-amber text-lg">✨</span>
+    <span id="toast-message">Item added to cart!</span>
   </div>
 
   <!-- Contact Header -->
@@ -156,7 +198,7 @@
           </div>
           <div class="space-y-2">
             <label class="text-xs uppercase tracking-wider text-warmgray font-semibold">Message</label>
-            <rows="4" class="w-full bg-coffee border border-coffee/80 rounded-xl px-4 py-3.5 text-cream placeholder-warmgray/50 focus:outline-none focus:border-amber transition-colors text-sm h-32 resize-none" placeholder="How can we help you?"></textarea>
+            <textarea rows="4" required class="w-full bg-coffee border border-coffee/80 rounded-xl px-4 py-3.5 text-cream placeholder-warmgray/50 focus:outline-none focus:border-amber transition-colors text-sm resize-none" placeholder="How can we help you?"></textarea>
           </div>
           <button type="submit" class="w-full py-4 rounded-xl bg-amber text-espresso font-semibold hover:bg-gold transition-colors shadow-lg shadow-amber/20">
             Send Message
@@ -184,14 +226,97 @@
   </footer>
 
   <script>
+    // Mobile menu toggle
     const menuBtn = document.getElementById('menu-btn');
     const mobileMenu = document.getElementById('mobile-menu');
     menuBtn.addEventListener('click', () => {
       mobileMenu.classList.toggle('translate-x-full');
     });
+
+    // Lenis Smooth Scroll
     const lenis = new Lenis({ duration: 1.2, easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)) });
     function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
     requestAnimationFrame(raf);
+
+    // Cart State & Functionality
+    let cart = JSON.parse(localStorage.getItem('star_coffee_cart')) || [];
+
+    const cartToggleBtn = document.getElementById('cart-toggle-btn');
+    const cartDrawer = document.getElementById('cart-drawer');
+    const cartCloseBtn = document.getElementById('cart-close-btn');
+    const cartBadge = document.getElementById('cart-badge');
+    const cartItemsContainer = document.getElementById('cart-items-container');
+    const cartFooter = document.getElementById('cart-footer');
+    const cartSubtotal = document.getElementById('cart-subtotal');
+    const cartTotal = document.getElementById('cart-total');
+    const checkoutBtn = document.getElementById('checkout-btn');
+
+    cartToggleBtn.addEventListener('click', () => cartDrawer.classList.toggle('translate-x-full'));
+    cartCloseBtn.addEventListener('click', () => cartDrawer.classList.add('translate-x-full'));
+
+    function updateCart() {
+      localStorage.setItem('star_coffee_cart', JSON.stringify(cart));
+      const totalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+
+      if (totalCount > 0) {
+        cartBadge.textContent = totalCount;
+        cartBadge.classList.remove('scale-0');
+        cartFooter.classList.remove('hidden');
+      } else {
+        cartBadge.classList.add('scale-0');
+        cartFooter.classList.add('hidden');
+      }
+
+      if (cart.length === 0) {
+        cartItemsContainer.innerHTML = '<div class="text-center text-warmgray py-12">Your cart is currently empty.</div>';
+        return;
+      }
+
+      cartItemsContainer.innerHTML = cart.map((item, index) => `
+        <div class="glass p-4 rounded-2xl flex items-center justify-between gap-4">
+          <div>
+            <h4 class="font-serif font-bold text-cream text-base">${item.name}</h4>
+            <div class="text-amber text-sm font-semibold">$${(item.price * item.quantity).toFixed(2)}</div>
+          </div>
+          <div class="flex items-center gap-3">
+            <button onclick="adjustQuantity(${index}, -1)" class="w-8 h-8 rounded-lg glass flex items-center justify-center text-cream hover:bg-amber hover:text-espresso transition-colors">-</button>
+            <span class="font-bold text-cream">${item.quantity}</span>
+            <button onclick="adjustQuantity(${index}, 1)" class="w-8 h-8 rounded-lg glass flex items-center justify-center text-cream hover:bg-amber hover:text-espresso transition-colors">+</button>
+          </div>
+        </div>
+      `).join('');
+
+      const subtotalVal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+      cartSubtotal.textContent = `$${subtotalVal.toFixed(2)}`;
+      cartTotal.textContent = `$${subtotalVal.toFixed(2)}`;
+    }
+
+    window.adjustQuantity = function(index, delta) {
+      cart[index].quantity += delta;
+      if (cart[index].quantity <= 0) {
+        cart.splice(index, 1);
+      }
+      updateCart();
+    }
+
+    checkoutBtn.addEventListener('click', () => {
+      if (cart.length === 0) return;
+      alert('🎉 Order placed successfully! Your artisanal coffee is being prepared by our master baristas.');
+      cart = [];
+      updateCart();
+      cartDrawer.classList.add('translate-x-full');
+    });
+
+    updateCart();
+
+    // GSAP animations
+    gsap.from('section > *', {
+      opacity: 0,
+      y: 20,
+      duration: 0.8,
+      stagger: 0.15,
+      ease: 'power3.out'
+    });
   </script>
 </body>
 </html>
