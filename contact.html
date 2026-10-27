@@ -284,13 +284,43 @@
       mobileMenu.classList.toggle('translate-x-full');
     });
 
-    // Lenis Smooth Scroll
-    const lenis = new Lenis({ duration: 1.2, easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)) });
-    function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
-    requestAnimationFrame(raf);
+    // Register GSAP plugins immediately
+    if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
+      gsap.registerPlugin(ScrollTrigger);
+    }
+
+    // Lenis Smooth Scroll with GSAP ScrollTrigger Integration
+    if (typeof Lenis !== 'undefined') {
+      try {
+        const lenis = new Lenis({
+          duration: 1.2,
+          easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+          smoothWheel: true,
+        });
+
+        if (typeof ScrollTrigger !== 'undefined') {
+          lenis.on('scroll', ScrollTrigger.update);
+          gsap.ticker.add((time) => {
+            lenis.raf(time * 1000);
+          });
+          gsap.ticker.lagSmoothing(0);
+        } else {
+          function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
+          requestAnimationFrame(raf);
+        }
+      } catch (err) {
+        console.warn('Lenis initialization skipped:', err);
+      }
+    }
 
     // Cart State & Functionality
-    let cart = JSON.parse(localStorage.getItem('star_coffee_cart')) || [];
+    let cart = [];
+    try {
+      cart = JSON.parse(localStorage.getItem('star_coffee_cart')) || [];
+      if (!Array.isArray(cart)) cart = [];
+    } catch (e) {
+      cart = [];
+    }
 
     const cartToggleBtn = document.getElementById('cart-toggle-btn');
     const cartDrawer = document.getElementById('cart-drawer');
@@ -302,21 +332,38 @@
     const cartTotal = document.getElementById('cart-total');
     const checkoutBtn = document.getElementById('checkout-btn');
 
-    cartToggleBtn.addEventListener('click', () => cartDrawer.classList.toggle('translate-x-full'));
-    cartCloseBtn.addEventListener('click', () => cartDrawer.classList.add('translate-x-full'));
+    if (cartToggleBtn && cartDrawer) {
+      cartToggleBtn.addEventListener('click', () => cartDrawer.classList.toggle('translate-x-full'));
+    }
+    if (cartCloseBtn && cartDrawer) {
+      cartCloseBtn.addEventListener('click', () => cartDrawer.classList.add('translate-x-full'));
+    }
 
     function updateCart() {
-      localStorage.setItem('star_coffee_cart', JSON.stringify(cart));
+      try {
+        localStorage.setItem('star_coffee_cart', JSON.stringify(cart));
+      } catch (e) {}
+
       const totalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
 
-      if (totalCount > 0) {
-        cartBadge.textContent = totalCount;
-        cartBadge.classList.remove('scale-0');
-        cartFooter.classList.remove('hidden');
-      } else {
-        cartBadge.classList.add('scale-0');
-        cartFooter.classList.add('hidden');
+      if (cartBadge) {
+        if (totalCount > 0) {
+          cartBadge.textContent = totalCount;
+          cartBadge.classList.remove('scale-0');
+        } else {
+          cartBadge.classList.add('scale-0');
+        }
       }
+
+      if (cartFooter) {
+        if (totalCount > 0) {
+          cartFooter.classList.remove('hidden');
+        } else {
+          cartFooter.classList.add('hidden');
+        }
+      }
+
+      if (!cartItemsContainer) return;
 
       if (cart.length === 0) {
         cartItemsContainer.innerHTML = '<div class="text-center text-warmgray py-12">Your cart is currently empty.</div>';
@@ -338,62 +385,69 @@
       `).join('');
 
       const subtotalVal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-      cartSubtotal.textContent = `$${subtotalVal.toFixed(2)}`;
-      cartTotal.textContent = `$${subtotalVal.toFixed(2)}`;
+      if (cartSubtotal) cartSubtotal.textContent = `$${subtotalVal.toFixed(2)}`;
+      if (cartTotal) cartTotal.textContent = `$${subtotalVal.toFixed(2)}`;
     }
 
     window.adjustQuantity = function(index, delta) {
+      if (!cart[index]) return;
       cart[index].quantity += delta;
       if (cart[index].quantity <= 0) {
         cart.splice(index, 1);
       }
       updateCart();
-    }
+    };
 
-    checkoutBtn.addEventListener('click', () => {
-      if (cart.length === 0) return;
-      alert('🎉 Order placed successfully! Your artisanal coffee is being prepared by our master baristas.');
-      cart = [];
-      updateCart();
-      cartDrawer.classList.add('translate-x-full');
-    });
+    if (checkoutBtn) {
+      checkoutBtn.addEventListener('click', () => {
+        if (cart.length === 0) return;
+        alert('🎉 Order placed successfully! Your artisanal coffee is being prepared by our master baristas.');
+        cart = [];
+        updateCart();
+        if (cartDrawer) cartDrawer.classList.add('translate-x-full');
+      });
+    }
 
     updateCart();
 
-    // GSAP ScrollTrigger Animations (Snappy & Respecting prefers-reduced-motion)
+    // GSAP ScrollTrigger Animations
     const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (!prefersReduced) {
-      gsap.registerPlugin(ScrollTrigger);
+    if (!prefersReduced && typeof gsap !== 'undefined') {
+      if (typeof ScrollTrigger !== 'undefined') {
+        ScrollTrigger.refresh();
+      }
 
       gsap.from('.contact-header > *', {
         opacity: 0,
-        y: 30,
+        y: 25,
         duration: 0.6,
-        stagger: 0.15,
+        stagger: 0.12,
         ease: 'power3.out'
       });
 
-      gsap.from('.info-col', {
-        scrollTrigger: {
-          trigger: '.contact-content',
-          start: 'top 85%'
-        },
-        opacity: 0,
-        x: -40,
-        duration: 0.6,
-        ease: 'power3.out'
-      });
+      if (typeof ScrollTrigger !== 'undefined') {
+        gsap.from('.info-col', {
+          scrollTrigger: {
+            trigger: '.contact-content',
+            start: 'top 85%'
+          },
+          opacity: 0,
+          x: -30,
+          duration: 0.7,
+          ease: 'power3.out'
+        });
 
-      gsap.from('.form-col', {
-        scrollTrigger: {
-          trigger: '.contact-content',
-          start: 'top 85%'
-        },
-        opacity: 0,
-        x: 40,
-        duration: 0.6,
-        ease: 'power3.out'
-      });
+        gsap.from('.form-col', {
+          scrollTrigger: {
+            trigger: '.contact-content',
+            start: 'top 85%'
+          },
+          opacity: 0,
+          x: 30,
+          duration: 0.7,
+          ease: 'power3.out'
+        });
+      }
     }
   </script>
 </body>

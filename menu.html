@@ -270,11 +270,11 @@
       </div>
       <!-- Category Tabs -->
       <div class="flex items-center gap-2 overflow-x-auto w-full md:w-auto pb-2 md:pb-0">
-        <button onclick="filterCategory('all')" class="cat-btn px-5 py-2.5 rounded-xl bg-amber text-espresso font-semibold text-sm whitespace-nowrap transition-all duration-300 shadow-md active:scale-95">All Items</button>
-        <button onclick="filterCategory('espresso')" class="cat-btn px-5 py-2.5 rounded-xl glass text-warmgray hover:text-cream font-medium text-sm whitespace-nowrap transition-all duration-300 active:scale-95">Espresso & Brews</button>
-        <button onclick="filterCategory('specialty')" class="cat-btn px-5 py-2.5 rounded-xl glass text-warmgray hover:text-cream font-medium text-sm whitespace-nowrap transition-all duration-300 active:scale-95">Specialty Lattes</button>
-        <button onclick="filterCategory('cold')" class="cat-btn px-5 py-2.5 rounded-xl glass text-warmgray hover:text-cream font-medium text-sm whitespace-nowrap transition-all duration-300 active:scale-95">Cold & Iced</button>
-        <button onclick="filterCategory('bakery')" class="cat-btn px-5 py-2.5 rounded-xl glass text-warmgray hover:text-cream font-medium text-sm whitespace-nowrap transition-all duration-300 active:scale-95">Bakery</button>
+        <button onclick="filterCategory('all', this)" class="cat-btn px-5 py-2.5 rounded-xl bg-amber text-espresso font-semibold text-sm whitespace-nowrap transition-all duration-300 shadow-md active:scale-95">All Items</button>
+        <button onclick="filterCategory('espresso', this)" class="cat-btn px-5 py-2.5 rounded-xl glass text-warmgray hover:text-cream font-medium text-sm whitespace-nowrap transition-all duration-300 active:scale-95">Espresso & Brews</button>
+        <button onclick="filterCategory('specialty', this)" class="cat-btn px-5 py-2.5 rounded-xl glass text-warmgray hover:text-cream font-medium text-sm whitespace-nowrap transition-all duration-300 active:scale-95">Specialty Lattes</button>
+        <button onclick="filterCategory('cold', this)" class="cat-btn px-5 py-2.5 rounded-xl glass text-warmgray hover:text-cream font-medium text-sm whitespace-nowrap transition-all duration-300 active:scale-95">Cold & Iced</button>
+        <button onclick="filterCategory('bakery', this)" class="cat-btn px-5 py-2.5 rounded-xl glass text-warmgray hover:text-cream font-medium text-sm whitespace-nowrap transition-all duration-300 active:scale-95">Bakery</button>
       </div>
     </div>
   </div>
@@ -305,19 +305,28 @@
   <!-- Include Centralized Menu Data Store -->
   <script src="js/menu-data.js"></script>
   <script>
+    // Register GSAP plugins immediately
+    if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
+      gsap.registerPlugin(ScrollTrigger);
+    }
+
     // Hide Preloader on window load
     window.addEventListener('load', () => {
       const preloader = document.getElementById('preloader');
-      preloader.style.opacity = '0';
-      setTimeout(() => preloader.style.display = 'none', 500);
+      if (preloader) {
+        preloader.style.opacity = '0';
+        setTimeout(() => preloader.style.display = 'none', 500);
+      }
     });
 
     // Mobile menu toggle
     const menuBtn = document.getElementById('menu-btn');
     const mobileMenu = document.getElementById('mobile-menu');
-    menuBtn.addEventListener('click', () => {
-      mobileMenu.classList.toggle('translate-x-full');
-    });
+    if (menuBtn && mobileMenu) {
+      menuBtn.addEventListener('click', () => {
+        mobileMenu.classList.toggle('translate-x-full');
+      });
+    }
 
     // Liquid Sliding Nav Pill Indicator
     const navBox = document.getElementById('nav-pill-box');
@@ -325,7 +334,7 @@
     const links = document.querySelectorAll('.nav-link-item');
 
     function updatePill(activeLink) {
-      if (!activeLink || !pill) return;
+      if (!activeLink || !pill || !navBox) return;
       const boxRect = navBox.getBoundingClientRect();
       const linkRect = activeLink.getBoundingClientRect();
       const left = linkRect.left - boxRect.left;
@@ -335,7 +344,7 @@
     }
 
     const currentPath = window.location.pathname.split('/').pop() || 'index.html';
-    let defaultActive = document.querySelector(`.nav-link-item[data-page="${currentPath}"]`) || links[0];
+    let defaultActive = document.querySelector(`.nav-link-item[data-page="${currentPath}"]`) || links[1] || links[0];
 
     links.forEach(link => {
       if (link.getAttribute('data-page') === currentPath) {
@@ -348,17 +357,44 @@
       link.addEventListener('mouseenter', () => updatePill(link));
     });
 
-    navBox.addEventListener('mouseleave', () => updatePill(defaultActive));
-    window.addEventListener('resize', () => updatePill(defaultActive));
-    updatePill(defaultActive);
+    if (navBox) {
+      navBox.addEventListener('mouseleave', () => updatePill(defaultActive));
+      window.addEventListener('resize', () => updatePill(defaultActive));
+      updatePill(defaultActive);
+    }
 
-    // Lenis Smooth Scroll
-    const lenis = new Lenis({ duration: 1.2, easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)) });
-    function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
-    requestAnimationFrame(raf);
+    // Lenis Smooth Scroll with GSAP ScrollTrigger Integration
+    if (typeof Lenis !== 'undefined') {
+      try {
+        const lenis = new Lenis({
+          duration: 1.2,
+          easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+          smoothWheel: true,
+        });
+
+        if (typeof ScrollTrigger !== 'undefined') {
+          lenis.on('scroll', ScrollTrigger.update);
+          gsap.ticker.add((time) => {
+            lenis.raf(time * 1000);
+          });
+          gsap.ticker.lagSmoothing(0);
+        } else {
+          function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
+          requestAnimationFrame(raf);
+        }
+      } catch (err) {
+        console.warn('Lenis initialization skipped:', err);
+      }
+    }
 
     // Cart State & Functionality
-    let cart = JSON.parse(localStorage.getItem('star_coffee_cart')) || [];
+    let cart = [];
+    try {
+      cart = JSON.parse(localStorage.getItem('star_coffee_cart')) || [];
+      if (!Array.isArray(cart)) cart = [];
+    } catch (e) {
+      cart = [];
+    }
 
     const cartToggleBtn = document.getElementById('cart-toggle-btn');
     const cartDrawer = document.getElementById('cart-drawer');
@@ -372,10 +408,15 @@
     const toast = document.getElementById('toast');
     const toastMessage = document.getElementById('toast-message');
 
-    cartToggleBtn.addEventListener('click', () => cartDrawer.classList.toggle('translate-x-full'));
-    cartCloseBtn.addEventListener('click', () => cartDrawer.classList.add('translate-x-full'));
+    if (cartToggleBtn && cartDrawer) {
+      cartToggleBtn.addEventListener('click', () => cartDrawer.classList.toggle('translate-x-full'));
+    }
+    if (cartCloseBtn && cartDrawer) {
+      cartCloseBtn.addEventListener('click', () => cartDrawer.classList.add('translate-x-full'));
+    }
 
     function showToast(msg) {
+      if (!toast || !toastMessage) return;
       toastMessage.textContent = msg;
       toast.classList.remove('translate-y-20', 'opacity-0');
       setTimeout(() => {
@@ -392,21 +433,36 @@
       }
       updateCart();
       showToast(`Added ${name} to your order!`);
-      gsap.fromTo(cartBadge, { scale: 1.4 }, { scale: 1, duration: 0.3, ease: 'back.out' });
+      if (typeof gsap !== 'undefined' && cartBadge) {
+        gsap.fromTo(cartBadge, { scale: 1.4 }, { scale: 1, duration: 0.3, ease: 'back.out' });
+      }
     }
 
     function updateCart() {
-      localStorage.setItem('star_coffee_cart', JSON.stringify(cart));
+      try {
+        localStorage.setItem('star_coffee_cart', JSON.stringify(cart));
+      } catch (e) {}
+
       const totalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
 
-      if (totalCount > 0) {
-        cartBadge.textContent = totalCount;
-        cartBadge.classList.remove('scale-0');
-        cartFooter.classList.remove('hidden');
-      } else {
-        cartBadge.classList.add('scale-0');
-        cartFooter.classList.add('hidden');
+      if (cartBadge) {
+        if (totalCount > 0) {
+          cartBadge.textContent = totalCount;
+          cartBadge.classList.remove('scale-0');
+        } else {
+          cartBadge.classList.add('scale-0');
+        }
       }
+
+      if (cartFooter) {
+        if (totalCount > 0) {
+          cartFooter.classList.remove('hidden');
+        } else {
+          cartFooter.classList.add('hidden');
+        }
+      }
+
+      if (!cartItemsContainer) return;
 
       if (cart.length === 0) {
         cartItemsContainer.innerHTML = '<div class="text-center text-warmgray py-12">Your cart is currently empty.</div>';
@@ -428,25 +484,28 @@
       `).join('');
 
       const subtotalVal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-      cartSubtotal.textContent = `$${subtotalVal.toFixed(2)}`;
-      cartTotal.textContent = `$${subtotalVal.toFixed(2)}`;
+      if (cartSubtotal) cartSubtotal.textContent = `$${subtotalVal.toFixed(2)}`;
+      if (cartTotal) cartTotal.textContent = `$${subtotalVal.toFixed(2)}`;
     }
 
     window.adjustQuantity = function(index, delta) {
+      if (!cart[index]) return;
       cart[index].quantity += delta;
       if (cart[index].quantity <= 0) {
         cart.splice(index, 1);
       }
       updateCart();
-    }
+    };
 
-    checkoutBtn.addEventListener('click', () => {
-      if (cart.length === 0) return;
-      alert('🎉 Order placed successfully! Your artisanal coffee is being prepared by our master baristas.');
-      cart = [];
-      updateCart();
-      cartDrawer.classList.add('translate-x-full');
-    });
+    if (checkoutBtn) {
+      checkoutBtn.addEventListener('click', () => {
+        if (cart.length === 0) return;
+        alert('🎉 Order placed successfully! Your artisanal coffee is being prepared by our master baristas.');
+        cart = [];
+        updateCart();
+        if (cartDrawer) cartDrawer.classList.add('translate-x-full');
+      });
+    }
 
     updateCart();
 
@@ -459,69 +518,81 @@
     const resetDefaultBtn = document.getElementById('reset-default-btn');
 
     function openAdminModal() {
-      adminModal.classList.remove('opacity-0', 'pointer-events-none');
-      adminModalCard.classList.remove('scale-95');
-      adminModalCard.classList.add('scale-100');
+      if (adminModal && adminModalCard) {
+        adminModal.classList.remove('opacity-0', 'pointer-events-none');
+        adminModalCard.classList.remove('scale-95');
+        adminModalCard.classList.add('scale-100');
+      }
     }
 
     function closeAdminModal() {
-      adminModal.classList.add('opacity-0', 'pointer-events-none');
-      adminModalCard.classList.remove('scale-100');
-      adminModalCard.classList.add('scale-95');
+      if (adminModal && adminModalCard) {
+        adminModal.classList.add('opacity-0', 'pointer-events-none');
+        adminModalCard.classList.remove('scale-100');
+        adminModalCard.classList.add('scale-95');
+      }
     }
 
-    adminModalBtn.addEventListener('click', openAdminModal);
-    adminCloseBtn.addEventListener('click', closeAdminModal);
-    adminModal.addEventListener('click', (e) => {
-      if (e.target === adminModal) closeAdminModal();
-    });
+    if (adminModalBtn) adminModalBtn.addEventListener('click', openAdminModal);
+    if (adminCloseBtn) adminCloseBtn.addEventListener('click', closeAdminModal);
+    if (adminModal) {
+      adminModal.addEventListener('click', (e) => {
+        if (e.target === adminModal) closeAdminModal();
+      });
+    }
 
-    addCoffeeForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const name = document.getElementById('coffee-name').value;
-      const category = document.getElementById('coffee-category').value;
-      const price = parseFloat(document.getElementById('coffee-price').value);
-      const badge = document.getElementById('coffee-badge').value.trim() || null;
-      const description = document.getElementById('coffee-desc').value;
-      const image = document.getElementById('coffee-image').value.trim() || 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?q=80&w=800&auto=format&fit=crop';
+    if (addCoffeeForm) {
+      addCoffeeForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const name = document.getElementById('coffee-name').value;
+        const category = document.getElementById('coffee-category').value;
+        const price = parseFloat(document.getElementById('coffee-price').value);
+        const badge = document.getElementById('coffee-badge').value.trim() || null;
+        const description = document.getElementById('coffee-desc').value;
+        const image = document.getElementById('coffee-image').value.trim() || 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?q=80&w=800&auto=format&fit=crop';
 
-      addMenuItem({ name, category, price, badge, description, image });
-      addCoffeeForm.reset();
-      closeAdminModal();
-      renderMenuGrid();
-      showToast(`Successfully added ${name} to the menu!`);
-    });
-
-    resetDefaultBtn.addEventListener('click', () => {
-      if (confirm('Reset menu items to default list?')) {
-        resetMenuToDefault();
-        renderMenuGrid();
+        addMenuItem({ name, category, price, badge, description, image });
+        addCoffeeForm.reset();
         closeAdminModal();
-        showToast('Menu reset to defaults.');
-      }
-    });
+        renderMenuGrid();
+        showToast(`Successfully added ${name} to the menu!`);
+      });
+    }
 
-    // Dynamic Menu Rendering & Filtering with Picture on Top & Scroll Fade-Up Animation
+    if (resetDefaultBtn) {
+      resetDefaultBtn.addEventListener('click', () => {
+        if (confirm('Reset menu items to default list?')) {
+          resetMenuToDefault();
+          renderMenuGrid();
+          closeAdminModal();
+          showToast('Menu reset to defaults.');
+        }
+      });
+    }
+
+    // Dynamic Menu Rendering & Filtering
     let currentCategory = 'all';
 
     function renderMenuGrid() {
       const menuGrid = document.getElementById('menu-grid');
-      const items = getMenuItems();
-      const query = document.getElementById('menu-search').value.toLowerCase();
+      if (!menuGrid) return;
+
+      const items = (typeof getMenuItems === 'function') ? getMenuItems() : (typeof DEFAULT_MENU_ITEMS !== 'undefined' ? DEFAULT_MENU_ITEMS : []);
+      const query = (document.getElementById('menu-search')?.value || '').toLowerCase().trim();
 
       const filtered = items.filter(item => {
         const matchesCat = currentCategory === 'all' || item.category === currentCategory;
-        const matchesSearch = item.name.toLowerCase().includes(query) || item.description.toLowerCase().includes(query);
+        const matchesSearch = !query || (item.name && item.name.toLowerCase().includes(query)) || (item.description && item.description.toLowerCase().includes(query));
         return matchesCat && matchesSearch;
       });
 
       if (filtered.length === 0) {
-        menuGrid.innerHTML = `<div class="col-span-full text-center py-16 text-warmgray">No coffee or pastry items found matching your criteria.</div>`;
+        menuGrid.innerHTML = `<div class="col-span-full text-center py-20 text-warmgray"><p class="text-3xl mb-2">☕</p><p class="text-lg">No coffee or pastry items found matching your criteria.</p></div>`;
         return;
       }
 
       menuGrid.innerHTML = filtered.map(item => `
-        <div class="menu-item glass rounded-3xl overflow-hidden group hover:border-amber/40 transition-all duration-500 hover:-translate-y-2 flex flex-col justify-between scroll-reveal" data-category="${item.category}" data-name="${item.name.toLowerCase()}">
+        <div class="menu-item glass rounded-3xl overflow-hidden group hover:border-amber/40 transition-all duration-500 hover:-translate-y-2 flex flex-col justify-between scroll-reveal" data-category="${item.category}" data-name="${(item.name || '').toLowerCase()}">
           <div class="h-60 overflow-hidden relative">
             <img src="${item.image || 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?q=80&w=800&auto=format&fit=crop'}" alt="${item.name}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
             ${item.badge ? `<span class="absolute top-4 right-4 glass px-3 py-1 rounded-full text-xs font-bold text-amber shadow-lg">${item.badge}</span>` : ''}
@@ -530,79 +601,79 @@
             <div class="space-y-2">
               <div class="flex justify-between items-baseline gap-2">
                 <h3 class="font-serif text-2xl font-bold group-hover:text-amber transition-colors">${item.name}</h3>
-                <span class="text-amber font-serif font-bold text-xl">$${item.price.toFixed(2)}</span>
+                <span class="text-amber font-serif font-bold text-xl">$${Number(item.price).toFixed(2)}</span>
               </div>
               <p class="text-warmgray text-sm leading-relaxed">${item.description}</p>
             </div>
-            <button onclick="addToCart('${item.name.replace(/'/g, "\\'")}', ${item.price})" class="w-full py-3.5 rounded-xl bg-amber/10 text-amber font-semibold hover:bg-amber hover:text-espresso transition-all duration-300 shadow-md active:scale-95">
+            <button onclick="addToCart('${(item.name || '').replace(/'/g, "\\'")}', ${item.price})" class="w-full py-3.5 rounded-xl bg-amber/10 text-amber font-semibold hover:bg-amber hover:text-espresso transition-all duration-300 shadow-md active:scale-95">
               Add to Order
             </button>
           </div>
         </div>
       `).join('');
 
-      // Animate rendered items with GSAP ScrollTrigger Fade-Up
-      const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      if (!prefersReduced) {
-        gsap.utils.toArray('.scroll-reveal').forEach((elem) => {
-          gsap.fromTo(elem, {
-            opacity: 0,
-            y: 60
-          }, {
-            scrollTrigger: {
-              trigger: elem,
-              start: 'top 85%',
-              toggleActions: 'play none none none'
-            },
-            opacity: 1,
-            y: 0,
-            duration: 0.9,
-            ease: 'power3.out'
-          });
-        });
-      }
+      initScrollAnimations();
     }
 
-    function filterCategory(cat) {
+    function filterCategory(cat, btn) {
       currentCategory = cat;
-      document.querySelectorAll('.cat-btn').forEach(btn => {
-        btn.classList.remove('bg-amber', 'text-espresso', 'font-semibold', 'shadow-md');
-        btn.classList.add('glass', 'text-warmgray', 'font-medium');
+      document.querySelectorAll('.cat-btn').forEach(b => {
+        b.classList.remove('bg-amber', 'text-espresso', 'font-semibold', 'shadow-md');
+        b.classList.add('glass', 'text-warmgray', 'font-medium');
       });
-      event.target.classList.remove('glass', 'text-warmgray', 'font-medium');
-      event.target.classList.add('bg-amber', 'text-espresso', 'font-semibold', 'shadow-md');
-
+      if (btn) {
+        btn.classList.remove('glass', 'text-warmgray', 'font-medium');
+        btn.classList.add('bg-amber', 'text-espresso', 'font-semibold', 'shadow-md');
+      }
       renderMenuGrid();
     }
 
     const searchInput = document.getElementById('menu-search');
-    searchInput.addEventListener('input', renderMenuGrid);
+    if (searchInput) {
+      searchInput.addEventListener('input', renderMenuGrid);
+    }
 
-    // Initial render
-    renderMenuGrid();
-
-    // GSAP ScrollTrigger Animations for Scroll Down
-    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (!prefersReduced) {
-      gsap.registerPlugin(ScrollTrigger);
-
-      gsap.utils.toArray('.scroll-reveal').forEach((elem) => {
-        gsap.fromTo(elem, {
-          opacity: 0,
-          y: 60
-        }, {
-          scrollTrigger: {
-            trigger: elem,
-            start: 'top 85%',
-            toggleActions: 'play none none none'
-          },
-          opacity: 1,
-          y: 0,
-          duration: 0.9,
-          ease: 'power3.out'
+    // GSAP Scroll Animations
+    function initScrollAnimations() {
+      const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (prefersReduced || typeof gsap === 'undefined') {
+        document.querySelectorAll('.scroll-reveal').forEach(el => {
+          el.style.opacity = '1';
+          el.style.transform = 'none';
         });
+        return;
+      }
+
+      if (typeof ScrollTrigger !== 'undefined') {
+        ScrollTrigger.refresh();
+      }
+
+      const elements = document.querySelectorAll('.scroll-reveal');
+      elements.forEach(elem => {
+        const rect = elem.getBoundingClientRect();
+        if (rect.top < window.innerHeight && rect.bottom > 0) {
+          gsap.fromTo(elem, { opacity: 0.6, y: 15 }, { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out' });
+        } else if (typeof ScrollTrigger !== 'undefined') {
+          gsap.fromTo(elem, {
+            opacity: 0,
+            y: 50
+          }, {
+            scrollTrigger: {
+              trigger: elem,
+              start: 'top 90%',
+              toggleActions: 'play none none none'
+            },
+            opacity: 1,
+            y: 0,
+            duration: 0.8,
+            ease: 'power3.out'
+          });
+        }
       });
     }
+
+    // Initial render and animations on load
+    renderMenuGrid();
   </script>
 </body>
 </html>

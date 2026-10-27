@@ -2,11 +2,17 @@
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { MenuItem } from '@/lib/menuData';
+import { MenuItem, INITIAL_MENU_ITEMS } from '@/lib/menuData';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+if (typeof window !== 'undefined') {
+  gsap.registerPlugin(ScrollTrigger);
+}
 
 export default function MenuPage() {
-  const [items, setItems] = useState<MenuItem[]>([]);
-  const [filtered, setFiltered] = useState<MenuItem[]>([]);
+  const [items, setItems] = useState<MenuItem[]>(INITIAL_MENU_ITEMS);
+  const [filtered, setFiltered] = useState<MenuItem[]>(INITIAL_MENU_ITEMS);
   const [category, setCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [cart, setCart] = useState<any[]>([]);
@@ -30,13 +36,15 @@ export default function MenuPage() {
   const fetchMenu = async () => {
     try {
       const res = await fetch('/api/menu');
-      const data = await res.json();
-      if (data.success) {
-        setItems(data.data);
-        setFiltered(data.data);
+      if (res.ok) {
+        const data = await res.json();
+        if (data.success && Array.isArray(data.data) && data.data.length > 0) {
+          setItems(data.data);
+          setFiltered(data.data);
+        }
       }
     } catch (e) {
-      console.error('Failed to fetch menu');
+      console.warn('API route unavailable, using local initial menu items');
     }
   };
 
@@ -53,6 +61,37 @@ export default function MenuPage() {
     }
     setFiltered(result);
   }, [category, searchQuery, items]);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined' && filtered.length > 0) {
+      const timer = setTimeout(() => {
+        gsap.utils.toArray<HTMLElement>('.scroll-reveal').forEach((elem) => {
+          const rect = elem.getBoundingClientRect();
+          if (rect.top < window.innerHeight && rect.bottom > 0) {
+            gsap.fromTo(elem, { opacity: 0.6, y: 15 }, { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' });
+          } else {
+            gsap.fromTo(
+              elem,
+              { opacity: 0, y: 35 },
+              {
+                opacity: 1,
+                y: 0,
+                duration: 0.8,
+                ease: 'power3.out',
+                scrollTrigger: {
+                  trigger: elem,
+                  start: 'top 92%',
+                  toggleActions: 'play none none none',
+                },
+              }
+            );
+          }
+        });
+        ScrollTrigger.refresh();
+      }, 60);
+      return () => clearTimeout(timer);
+    }
+  }, [filtered]);
 
   const addToCart = (item: MenuItem) => {
     setCart((prev) => {
@@ -170,7 +209,7 @@ export default function MenuPage() {
 
       {/* Main Content */}
       <main className="flex-1 pt-32 pb-24 max-w-7xl mx-auto px-6 w-full">
-        <div className="text-center max-w-2xl mx-auto mb-12">
+        <div className="text-center max-w-2xl mx-auto mb-12 scroll-reveal">
           <p className="text-amber text-xs font-semibold tracking-wider uppercase mb-2">Our Offerings</p>
           <h1 className="font-serif text-4xl sm:text-5xl font-bold mb-4">The Artisanal Menu</h1>
           <p className="text-warmgray text-sm sm:text-base">
@@ -179,7 +218,7 @@ export default function MenuPage() {
         </div>
 
         {/* Search & Filter Bar */}
-        <div className="flex flex-col md:flex-row items-center justify-between gap-6 mb-12">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-6 mb-12 scroll-reveal">
           {/* Category Tabs */}
           <div className="flex flex-wrap items-center gap-2 glass p-2 rounded-2xl w-full md:w-auto">
             {[
@@ -224,7 +263,7 @@ export default function MenuPage() {
             </div>
           ) : (
             filtered.map((item) => (
-              <div key={item.id} className="glass rounded-3xl overflow-hidden flex flex-col group">
+              <div key={item.id} className="glass rounded-3xl overflow-hidden flex flex-col group scroll-reveal">
                 <div className="h-56 overflow-hidden relative">
                   <img
                     src={item.image}

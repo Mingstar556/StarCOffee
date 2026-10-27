@@ -204,20 +204,36 @@ const DEFAULT_MENU_ITEMS = [
 
 // Initialize menu items in localStorage if not present
 function getMenuItems() {
-  const stored = localStorage.getItem('star_coffee_menu_items');
-  if (!stored) {
-    localStorage.setItem('star_coffee_menu_items', JSON.stringify(DEFAULT_MENU_ITEMS));
-    return DEFAULT_MENU_ITEMS;
-  }
   try {
-    return JSON.parse(stored);
+    const stored = typeof localStorage !== 'undefined' ? localStorage.getItem('star_coffee_menu_items') : null;
+    if (!stored) {
+      if (typeof localStorage !== 'undefined') {
+        localStorage.setItem('star_coffee_menu_items', JSON.stringify(DEFAULT_MENU_ITEMS));
+      }
+      return DEFAULT_MENU_ITEMS;
+    }
+    const parsed = JSON.parse(stored);
+    if (!Array.isArray(parsed) || parsed.length === 0) {
+      if (typeof localStorage !== 'undefined') {
+        localStorage.setItem('star_coffee_menu_items', JSON.stringify(DEFAULT_MENU_ITEMS));
+      }
+      return DEFAULT_MENU_ITEMS;
+    }
+    return parsed;
   } catch (e) {
+    console.warn('localStorage read failed, defaulting to initial menu', e);
     return DEFAULT_MENU_ITEMS;
   }
 }
 
 function saveMenuItems(items) {
-  localStorage.setItem('star_coffee_menu_items', JSON.stringify(items));
+  try {
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem('star_coffee_menu_items', JSON.stringify(items));
+    }
+  } catch (e) {
+    console.warn('localStorage write failed', e);
+  }
 }
 
 function addMenuItem(newItem) {
@@ -233,6 +249,29 @@ function addMenuItem(newItem) {
 }
 
 function resetMenuToDefault() {
-  localStorage.setItem('star_coffee_menu_items', JSON.stringify(DEFAULT_MENU_ITEMS));
+  try {
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem('star_coffee_menu_items', JSON.stringify(DEFAULT_MENU_ITEMS));
+    }
+  } catch (e) {}
   return DEFAULT_MENU_ITEMS;
+}
+
+// Global exposure for browser & Node environments
+if (typeof window !== 'undefined') {
+  window.DEFAULT_MENU_ITEMS = DEFAULT_MENU_ITEMS;
+  window.getMenuItems = getMenuItems;
+  window.saveMenuItems = saveMenuItems;
+  window.addMenuItem = addMenuItem;
+  window.resetMenuToDefault = resetMenuToDefault;
+}
+
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = {
+    DEFAULT_MENU_ITEMS,
+    getMenuItems,
+    saveMenuItems,
+    addMenuItem,
+    resetMenuToDefault,
+  };
 }

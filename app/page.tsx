@@ -19,23 +19,32 @@ export default function Home() {
 
   useEffect(() => {
     // Scroll animations
-    gsap.utils.toArray<HTMLElement>('.scroll-reveal').forEach((elem) => {
-      gsap.fromTo(
-        elem,
-        { opacity: 0, y: 50 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 1,
-          ease: 'power3.out',
-          scrollTrigger: {
-            trigger: elem,
-            start: 'top 85%',
-            toggleActions: 'play none none none',
-          },
+    const timer = setTimeout(() => {
+      gsap.utils.toArray<HTMLElement>('.scroll-reveal').forEach((elem) => {
+        const rect = elem.getBoundingClientRect();
+        if (rect.top < window.innerHeight && rect.bottom > 0) {
+          gsap.fromTo(elem, { opacity: 0.6, y: 15 }, { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out' });
+        } else {
+          gsap.fromTo(
+            elem,
+            { opacity: 0, y: 40 },
+            {
+              opacity: 1,
+              y: 0,
+              duration: 0.9,
+              ease: 'power3.out',
+              scrollTrigger: {
+                trigger: elem,
+                start: 'top 90%',
+                toggleActions: 'play none none none',
+              },
+            }
+          );
         }
-      );
-    });
+      });
+      ScrollTrigger.refresh();
+    }, 60);
+    return () => clearTimeout(timer);
   }, []);
 
   const addToCart = (item: any) => {
