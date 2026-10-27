@@ -25,9 +25,6 @@
           fontFamily: {
             sans: ['"Plus Jakarta Sans"', 'sans-serif'],
             serif: ['"Playfair Display"', 'serif']
-          },
-          transitionTimingFunction: {
-            'custom': 'cubic-bezier(0.16, 1, 0.3, 1)'
           }
         }
       }
@@ -84,7 +81,43 @@
       animation: steam 4s infinite cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    /* Respect prefers-reduced-motion */
+    /* Liquid Nav Indicator */
+    .nav-pill-container {
+      position: relative;
+      background: rgba(27, 20, 18, 0.6);
+      border: 1px solid rgba(200, 138, 88, 0.2);
+      border-radius: 9999px;
+      padding: 4px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .liquid-pill {
+      position: absolute;
+      top: 4px;
+      bottom: 4px;
+      left: 0;
+      width: 0;
+      background: linear-gradient(135deg, #c88a58, #e0b084);
+      border-radius: 9999px;
+      transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+      z-index: 1;
+      box-shadow: 0 4px 15px rgba(200, 138, 88, 0.3);
+    }
+    .nav-link-item {
+      position: relative;
+      z-index: 2;
+      padding: 8px 18px;
+      font-size: 14px;
+      font-weight: 500;
+      color: #a39690;
+      transition: color 0.3s ease;
+      border-radius: 9999px;
+    }
+    .nav-link-item.active, .nav-link-item:hover {
+      color: #1b1412;
+    }
+
     @media (prefers-reduced-motion: reduce) {
       *, ::before, ::after {
         animation-duration: 0.01ms !important;
@@ -103,20 +136,26 @@
     <div class="mt-6 font-serif text-xl tracking-widest text-amber animate-pulse">STAR COFFEE</div>
   </div>
 
-  <!-- Navigation -->
+  <!-- Navigation with Liquid Sliding Indicator -->
   <header class="fixed top-0 left-0 right-0 z-50 px-6 py-4 transition-all duration-300" id="navbar">
-    <nav class="max-w-7xl mx-auto glass rounded-2xl px-6 py-4 flex items-center justify-between shadow-2xl">
+    <nav class="max-w-7xl mx-auto glass rounded-2xl px-6 py-3 flex items-center justify-between shadow-2xl">
       <a href="index.html" class="flex items-center gap-3 group">
         <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber to-gold flex items-center justify-center text-espresso font-serif font-bold text-xl shadow-lg shadow-amber/20 group-hover:scale-110 transition-transform duration-300">
           ★
         </div>
         <span class="font-serif text-2xl font-bold tracking-tight text-cream">Star Coffee</span>
       </a>
-      <div class="hidden md:flex items-center gap-8 font-medium text-sm text-warmgray">
-        <a href="index.html" class="text-cream font-semibold transition-colors duration-200 hover:text-amber">Home</a>
-        <a href="menu.html" class="hover:text-cream transition-colors duration-200">Menu</a>
-        <a href="contact.html" class="hover:text-cream transition-colors duration-200">Location & Contact</a>
+
+      <!-- Liquid Nav Links -->
+      <div class="hidden md:block">
+        <div class="nav-pill-container" id="nav-pill-box">
+          <div class="liquid-pill" id="liquid-pill-indicator"></div>
+          <a href="index.html" class="nav-link-item active" data-page="index.html">Home</a>
+          <a href="menu.html" class="nav-link-item" data-page="menu.html">Menu</a>
+          <a href="contact.html" class="nav-link-item" data-page="contact.html">Location & Contact</a>
+        </div>
       </div>
+
       <div class="flex items-center gap-4">
         <button id="cart-toggle-btn" class="relative p-2.5 rounded-xl glass hover:border-amber/50 transition-all duration-300 flex items-center justify-center text-cream hover:scale-105 active:scale-95">
           <svg class="w-5 h-5 text-amber" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
@@ -175,7 +214,7 @@
   </div>
 
   <!-- Hero Section -->
-  <section class="relative min-h-screen flex items-center justify-center pt-32 pb-20 px-6 hero-glow overflow-hidden">
+  <section class="relative min-h-screen flex items-center justify-center pt-32 pb-20 px-6 hero-glow overflow-hidden scroll-reveal">
     <div class="absolute inset-0 pointer-events-none overflow-hidden">
       <div class="steam-particle w-20 h-20 top-1/3 left-1/4" style="animation-delay: 0s;"></div>
       <div class="steam-particle w-16 h-16 top-1/2 left-1/3" style="animation-delay: 1.5s;"></div>
@@ -203,22 +242,22 @@
         </div>
         <!-- Stats -->
         <div class="grid grid-cols-3 gap-6 pt-8 border-t border-coffee/60 max-w-lg mx-auto lg:mx-0 stats-grid">
-          <div class="stat-item">
+          <div class="stat-item scroll-reveal">
             <div class="font-serif text-3xl font-bold text-amber">100%</div>
             <div class="text-xs text-warmgray uppercase tracking-wider mt-1">Arabica Beans</div>
           </div>
-          <div class="stat-item">
+          <div class="stat-item scroll-reveal">
             <div class="font-serif text-3xl font-bold text-amber">12+</div>
             <div class="text-xs text-warmgray uppercase tracking-wider mt-1">Single Origins</div>
           </div>
-          <div class="stat-item">
+          <div class="stat-item scroll-reveal">
             <div class="font-serif text-3xl font-bold text-amber">4.9★</div>
             <div class="text-xs text-warmgray uppercase tracking-wider mt-1">Customer Rating</div>
           </div>
         </div>
       </div>
       <!-- Hero Image / Visual -->
-      <div class="lg:col-span-5 relative hero-image">
+      <div class="lg:col-span-5 relative hero-image scroll-reveal">
         <div class="relative mx-auto max-w-md lg:max-w-none">
           <div class="absolute -inset-4 bg-gradient-to-tr from-amber/30 to-gold/10 rounded-3xl blur-2xl -z-10 animate-pulse"></div>
           <div class="rounded-3xl overflow-hidden glass p-3 shadow-2xl border border-amber/20 group">
@@ -240,23 +279,23 @@
   <!-- Featured Highlights -->
   <section class="py-24 px-6 border-t border-coffee/40 bg-gradient-to-b from-transparent to-coffee/25 highlights-section">
     <div class="max-w-7xl mx-auto">
-      <div class="text-center max-w-2xl mx-auto mb-16 space-y-4 section-header">
+      <div class="text-center max-w-2xl mx-auto mb-16 space-y-4 section-header scroll-reveal">
         <span class="text-amber text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full glass inline-block">The Star Coffee Experience</span>
         <h2 class="font-serif text-4xl sm:text-5xl font-bold">Crafted with Passion & Precision</h2>
         <p class="text-warmgray text-lg">Every detail of your cup is meticulously dialed in for maximum warmth, body, and aroma.</p>
       </div>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-8 cards-grid">
-        <div class="glass p-8 rounded-3xl space-y-4 hover:border-amber/50 transition-all duration-300 group hover:-translate-y-2">
+        <div class="glass p-8 rounded-3xl space-y-4 hover:border-amber/50 transition-all duration-300 group hover:-translate-y-2 scroll-reveal">
           <div class="w-14 h-14 rounded-2xl bg-amber/10 flex items-center justify-center text-amber text-2xl group-hover:scale-110 group-hover:rotate-6 transition-transform shadow-inner">🌱</div>
           <h3 class="font-serif text-2xl font-bold">Ethical Sourcing</h3>
           <p class="text-warmgray leading-relaxed text-sm">Direct trade relationships with high-altitude farmers ensuring fair wages, sustainable agriculture, and pristine bean quality.</p>
         </div>
-        <div class="glass p-8 rounded-3xl space-y-4 hover:border-amber/50 transition-all duration-300 group hover:-translate-y-2">
+        <div class="glass p-8 rounded-3xl space-y-4 hover:border-amber/50 transition-all duration-300 group hover:-translate-y-2 scroll-reveal">
           <div class="w-14 h-14 rounded-2xl bg-amber/10 flex items-center justify-center text-amber text-2xl group-hover:scale-110 group-hover:rotate-6 transition-transform shadow-inner">🔥</div>
           <h3 class="font-serif text-2xl font-bold">Small-Batch Roast</h3>
           <p class="text-warmgray leading-relaxed text-sm">Roasted daily in small quantities using artisanal drum roasters to unlock subtle flavor notes of rich chocolate, caramel, and berry.</p>
         </div>
-        <div class="glass p-8 rounded-3xl space-y-4 hover:border-amber/50 transition-all duration-300 group hover:-translate-y-2">
+        <div class="glass p-8 rounded-3xl space-y-4 hover:border-amber/50 transition-all duration-300 group hover:-translate-y-2 scroll-reveal">
           <div class="w-14 h-14 rounded-2xl bg-amber/10 flex items-center justify-center text-amber text-2xl group-hover:scale-110 group-hover:rotate-6 transition-transform shadow-inner">☕</div>
           <h3 class="font-serif text-2xl font-bold">Expert Baristas</h3>
           <p class="text-warmgray leading-relaxed text-sm">Trained masters of extraction, milk chemistry, and latte art dedicated to elevating your daily morning ritual into an unforgettable experience.</p>
@@ -267,7 +306,7 @@
 
   <!-- Popular Drinks Preview Section -->
   <section class="py-24 px-6 max-w-7xl mx-auto favorites-section">
-    <div class="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
+    <div class="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6 scroll-reveal">
       <div class="space-y-4">
         <span class="text-amber text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full glass inline-block">Menu Highlights</span>
         <h2 class="font-serif text-4xl sm:text-5xl font-bold">Customer Favorites</h2>
@@ -280,7 +319,7 @@
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-8 favorites-grid">
       <!-- Item 1 -->
-      <div class="glass rounded-3xl overflow-hidden group hover:border-amber/40 transition-all duration-500 hover:-translate-y-2">
+      <div class="glass rounded-3xl overflow-hidden group hover:border-amber/40 transition-all duration-500 hover:-translate-y-2 scroll-reveal">
         <div class="h-64 overflow-hidden relative">
           <img src="https://images.unsplash.com/photo-1541167760496-1628856ab772?q=80&w=800&auto=format&fit=crop" alt="Latte" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
           <span class="absolute top-4 right-4 glass px-3 py-1 rounded-full text-xs font-bold text-amber">Best Seller</span>
@@ -298,7 +337,7 @@
       </div>
 
       <!-- Item 2 -->
-      <div class="glass rounded-3xl overflow-hidden group hover:border-amber/40 transition-all duration-500 hover:-translate-y-2">
+      <div class="glass rounded-3xl overflow-hidden group hover:border-amber/40 transition-all duration-500 hover:-translate-y-2 scroll-reveal">
         <div class="h-64 overflow-hidden relative">
           <img src="https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?q=80&w=800&auto=format&fit=crop" alt="Pour Over" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
           <span class="absolute top-4 right-4 glass px-3 py-1 rounded-full text-xs font-bold text-amber">Single Origin</span>
@@ -316,7 +355,7 @@
       </div>
 
       <!-- Item 3 -->
-      <div class="glass rounded-3xl overflow-hidden group hover:border-amber/40 transition-all duration-500 hover:-translate-y-2">
+      <div class="glass rounded-3xl overflow-hidden group hover:border-amber/40 transition-all duration-500 hover:-translate-y-2 scroll-reveal">
         <div class="h-64 overflow-hidden relative">
           <img src="https://images.unsplash.com/photo-1517701550927-30cf4ba1dba5?q=80&w=800&auto=format&fit=crop" alt="Cold Brew" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
           <span class="absolute top-4 right-4 glass px-3 py-1 rounded-full text-xs font-bold text-amber">Refreshing</span>
@@ -336,7 +375,7 @@
   </section>
 
   <!-- Footer -->
-  <footer class="py-12 px-6 border-t border-coffee/60 bg-coffee/40 text-center text-warmgray text-sm">
+  <footer class="py-12 px-6 border-t border-coffee/60 bg-coffee/40 text-center text-warmgray text-sm scroll-reveal">
     <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-6">
       <div class="flex items-center gap-3">
         <div class="w-8 h-8 rounded-lg bg-amber flex items-center justify-center text-espresso font-serif font-bold">★</div>
@@ -365,6 +404,39 @@
     menuBtn.addEventListener('click', () => {
       mobileMenu.classList.toggle('translate-x-full');
     });
+
+    // Liquid Sliding Nav Pill Indicator
+    const navBox = document.getElementById('nav-pill-box');
+    const pill = document.getElementById('liquid-pill-indicator');
+    const links = document.querySelectorAll('.nav-link-item');
+
+    function updatePill(activeLink) {
+      if (!activeLink || !pill) return;
+      const boxRect = navBox.getBoundingClientRect();
+      const linkRect = activeLink.getBoundingClientRect();
+      const left = linkRect.left - boxRect.left;
+      const width = linkRect.width;
+      pill.style.left = `${left}px`;
+      pill.style.width = `${width}px`;
+    }
+
+    const currentPath = window.location.pathname.split('/').pop() || 'index.html';
+    let defaultActive = document.querySelector(`.nav-link-item[data-page="${currentPath}"]`) || links[0];
+
+    links.forEach(link => {
+      if (link.getAttribute('data-page') === currentPath) {
+        link.classList.add('active');
+        defaultActive = link;
+      } else {
+        link.classList.remove('active');
+      }
+
+      link.addEventListener('mouseenter', () => updatePill(link));
+    });
+
+    navBox.addEventListener('mouseleave', () => updatePill(defaultActive));
+    window.addEventListener('resize', () => updatePill(defaultActive));
+    updatePill(defaultActive);
 
     // Lenis Smooth Scroll
     const lenis = new Lenis({ duration: 1.2, easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)) });
@@ -464,60 +536,26 @@
 
     updateCart();
 
-    // GSAP ScrollTrigger Animations (Snappy & Respecting prefers-reduced-motion)
+    // GSAP ScrollTrigger Fade-Up Animations for Scroll Down
     const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (!prefersReduced) {
       gsap.registerPlugin(ScrollTrigger);
 
-      gsap.from('.hero-content > *', {
-        opacity: 0,
-        y: 40,
-        duration: 0.6,
-        stagger: 0.1,
-        ease: 'power3.out'
-      });
-
-      gsap.from('.hero-image', {
-        opacity: 0,
-        scale: 0.95,
-        duration: 0.6,
-        delay: 0.2,
-        ease: 'power3.out'
-      });
-
-      gsap.from('.highlights-section .section-header', {
-        scrollTrigger: {
-          trigger: '.highlights-section',
-          start: 'top 85%'
-        },
-        opacity: 0,
-        y: 30,
-        duration: 0.5,
-        ease: 'power3.out'
-      });
-
-      gsap.from('.cards-grid > div', {
-        scrollTrigger: {
-          trigger: '.cards-grid',
-          start: 'top 85%'
-        },
-        opacity: 0,
-        y: 40,
-        duration: 0.5,
-        stagger: 0.15,
-        ease: 'power3.out'
-      });
-
-      gsap.from('.favorites-section > *', {
-        scrollTrigger: {
-          trigger: '.favorites-section',
-          start: 'top 85%'
-        },
-        opacity: 0,
-        y: 35,
-        duration: 0.5,
-        stagger: 0.15,
-        ease: 'power3.out'
+      gsap.utils.toArray('.scroll-reveal').forEach((elem) => {
+        gsap.fromTo(elem, {
+          opacity: 0,
+          y: 60
+        }, {
+          scrollTrigger: {
+            trigger: elem,
+            start: 'top 85%',
+            toggleActions: 'play none none none'
+          },
+          opacity: 1,
+          y: 0,
+          duration: 0.9,
+          ease: 'power3.out'
+        });
       });
     }
   </script>

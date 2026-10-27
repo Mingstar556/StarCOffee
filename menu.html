@@ -66,6 +66,43 @@
       100% { transform: scale(0.9) rotate(360deg); }
     }
 
+    /* Liquid Nav Indicator */
+    .nav-pill-container {
+      position: relative;
+      background: rgba(27, 20, 18, 0.6);
+      border: 1px solid rgba(200, 138, 88, 0.2);
+      border-radius: 9999px;
+      padding: 4px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .liquid-pill {
+      position: absolute;
+      top: 4px;
+      bottom: 4px;
+      left: 0;
+      width: 0;
+      background: linear-gradient(135deg, #c88a58, #e0b084);
+      border-radius: 9999px;
+      transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+      z-index: 1;
+      box-shadow: 0 4px 15px rgba(200, 138, 88, 0.3);
+    }
+    .nav-link-item {
+      position: relative;
+      z-index: 2;
+      padding: 8px 18px;
+      font-size: 14px;
+      font-weight: 500;
+      color: #a39690;
+      transition: color 0.3s ease;
+      border-radius: 9999px;
+    }
+    .nav-link-item.active, .nav-link-item:hover {
+      color: #1b1412;
+    }
+
     @media (prefers-reduced-motion: reduce) {
       *, ::before, ::after {
         animation-duration: 0.01ms !important;
@@ -84,20 +121,26 @@
     <div class="mt-6 font-serif text-xl tracking-widest text-amber animate-pulse">STAR COFFEE</div>
   </div>
 
-  <!-- Navigation -->
+  <!-- Navigation with Liquid Sliding Indicator -->
   <header class="fixed top-0 left-0 right-0 z-50 px-6 py-4 transition-all duration-300" id="navbar">
-    <nav class="max-w-7xl mx-auto glass rounded-2xl px-6 py-4 flex items-center justify-between shadow-2xl">
+    <nav class="max-w-7xl mx-auto glass rounded-2xl px-6 py-3 flex items-center justify-between shadow-2xl">
       <a href="index.html" class="flex items-center gap-3 group">
         <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber to-gold flex items-center justify-center text-espresso font-serif font-bold text-xl shadow-lg shadow-amber/20 group-hover:scale-110 transition-transform duration-300">
           ★
         </div>
         <span class="font-serif text-2xl font-bold tracking-tight text-cream">Star Coffee</span>
       </a>
-      <div class="hidden md:flex items-center gap-8 font-medium text-sm text-warmgray">
-        <a href="index.html" class="hover:text-cream transition-colors duration-200">Home</a>
-        <a href="menu.html" class="text-cream font-semibold transition-colors duration-200">Menu</a>
-        <a href="contact.html" class="hover:text-cream transition-colors duration-200">Location & Contact</a>
+
+      <!-- Liquid Nav Links -->
+      <div class="hidden md:block">
+        <div class="nav-pill-container" id="nav-pill-box">
+          <div class="liquid-pill" id="liquid-pill-indicator"></div>
+          <a href="index.html" class="nav-link-item" data-page="index.html">Home</a>
+          <a href="menu.html" class="nav-link-item active" data-page="menu.html">Menu</a>
+          <a href="contact.html" class="nav-link-item" data-page="contact.html">Location & Contact</a>
+        </div>
       </div>
+
       <div class="flex items-center gap-4">
         <button id="admin-modal-btn" class="hidden sm:inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl glass text-warmgray hover:text-cream font-medium text-sm transition-all hover:border-amber/40 active:scale-95" title="Add New Coffee Item">
           <span>+ Add Coffee</span>
@@ -211,14 +254,14 @@
   </div>
 
   <!-- Menu Header -->
-  <section class="pt-36 pb-12 px-6 text-center max-w-4xl mx-auto space-y-4 menu-header-section">
+  <section class="pt-36 pb-12 px-6 text-center max-w-4xl mx-auto space-y-4 menu-header-section scroll-reveal">
     <span class="text-amber text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full glass inline-block animate-pulse">Artisanal Offerings</span>
     <h1 class="font-serif text-5xl sm:text-6xl font-bold tracking-tight">Our Crafted Menu</h1>
     <p class="text-warmgray text-lg max-w-xl mx-auto font-light">From single-origin pour-overs to velvety lattes, ceremonial matchas, and freshly baked morning pastries.</p>
   </section>
 
   <!-- Search & Category Filters -->
-  <div class="max-w-7xl mx-auto px-6 mb-12 filter-bar">
+  <div class="max-w-7xl mx-auto px-6 mb-12 filter-bar scroll-reveal">
     <div class="flex flex-col md:flex-row items-center justify-between gap-6 glass p-4 rounded-2xl">
       <!-- Search Input -->
       <div class="w-full md:w-80 relative">
@@ -244,7 +287,7 @@
   </section>
 
   <!-- Footer -->
-  <footer class="py-12 px-6 border-t border-coffee/60 bg-coffee/40 text-center text-warmgray text-sm">
+  <footer class="py-12 px-6 border-t border-coffee/60 bg-coffee/40 text-center text-warmgray text-sm scroll-reveal">
     <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-6">
       <div class="flex items-center gap-3">
         <div class="w-8 h-8 rounded-lg bg-amber flex items-center justify-center text-espresso font-serif font-bold">★</div>
@@ -275,6 +318,39 @@
     menuBtn.addEventListener('click', () => {
       mobileMenu.classList.toggle('translate-x-full');
     });
+
+    // Liquid Sliding Nav Pill Indicator
+    const navBox = document.getElementById('nav-pill-box');
+    const pill = document.getElementById('liquid-pill-indicator');
+    const links = document.querySelectorAll('.nav-link-item');
+
+    function updatePill(activeLink) {
+      if (!activeLink || !pill) return;
+      const boxRect = navBox.getBoundingClientRect();
+      const linkRect = activeLink.getBoundingClientRect();
+      const left = linkRect.left - boxRect.left;
+      const width = linkRect.width;
+      pill.style.left = `${left}px`;
+      pill.style.width = `${width}px`;
+    }
+
+    const currentPath = window.location.pathname.split('/').pop() || 'index.html';
+    let defaultActive = document.querySelector(`.nav-link-item[data-page="${currentPath}"]`) || links[0];
+
+    links.forEach(link => {
+      if (link.getAttribute('data-page') === currentPath) {
+        link.classList.add('active');
+        defaultActive = link;
+      } else {
+        link.classList.remove('active');
+      }
+
+      link.addEventListener('mouseenter', () => updatePill(link));
+    });
+
+    navBox.addEventListener('mouseleave', () => updatePill(defaultActive));
+    window.addEventListener('resize', () => updatePill(defaultActive));
+    updatePill(defaultActive);
 
     // Lenis Smooth Scroll
     const lenis = new Lenis({ duration: 1.2, easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)) });
@@ -445,7 +521,7 @@
       }
 
       menuGrid.innerHTML = filtered.map(item => `
-        <div class="menu-item glass rounded-3xl overflow-hidden group hover:border-amber/40 transition-all duration-500 hover:-translate-y-2 flex flex-col justify-between" data-category="${item.category}" data-name="${item.name.toLowerCase()}">
+        <div class="menu-item glass rounded-3xl overflow-hidden group hover:border-amber/40 transition-all duration-500 hover:-translate-y-2 flex flex-col justify-between scroll-reveal" data-category="${item.category}" data-name="${item.name.toLowerCase()}">
           <div class="h-60 overflow-hidden relative">
             <img src="${item.image || 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?q=80&w=800&auto=format&fit=crop'}" alt="${item.name}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
             ${item.badge ? `<span class="absolute top-4 right-4 glass px-3 py-1 rounded-full text-xs font-bold text-amber shadow-lg">${item.badge}</span>` : ''}
@@ -468,19 +544,21 @@
       // Animate rendered items with GSAP ScrollTrigger Fade-Up
       const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       if (!prefersReduced) {
-        gsap.fromTo('.menu-item', {
-          opacity: 0,
-          y: 50
-        }, {
-          scrollTrigger: {
-            trigger: '#menu-grid',
-            start: 'top 85%'
-          },
-          opacity: 1,
-          y: 0,
-          duration: 0.8,
-          stagger: 0.1,
-          ease: 'power3.out'
+        gsap.utils.toArray('.scroll-reveal').forEach((elem) => {
+          gsap.fromTo(elem, {
+            opacity: 0,
+            y: 60
+          }, {
+            scrollTrigger: {
+              trigger: elem,
+              start: 'top 85%',
+              toggleActions: 'play none none none'
+            },
+            opacity: 1,
+            y: 0,
+            duration: 0.9,
+            ease: 'power3.out'
+          });
         });
       }
     }
@@ -503,25 +581,26 @@
     // Initial render
     renderMenuGrid();
 
-    // GSAP ScrollTrigger Animations for Header & Filters
+    // GSAP ScrollTrigger Animations for Scroll Down
     const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (!prefersReduced) {
       gsap.registerPlugin(ScrollTrigger);
 
-      gsap.from('.menu-header-section > *', {
-        opacity: 0,
-        y: 40,
-        duration: 0.8,
-        stagger: 0.15,
-        ease: 'power3.out'
-      });
-
-      gsap.from('.filter-bar', {
-        opacity: 0,
-        y: 30,
-        duration: 0.8,
-        delay: 0.2,
-        ease: 'power3.out'
+      gsap.utils.toArray('.scroll-reveal').forEach((elem) => {
+        gsap.fromTo(elem, {
+          opacity: 0,
+          y: 60
+        }, {
+          scrollTrigger: {
+            trigger: elem,
+            start: 'top 85%',
+            toggleActions: 'play none none none'
+          },
+          opacity: 1,
+          y: 0,
+          duration: 0.9,
+          ease: 'power3.out'
+        });
       });
     }
   </script>
