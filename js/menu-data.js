@@ -4,6 +4,7 @@
  */
 
 const DEFAULT_MENU_ITEMS = [
+  // Espresso & Brews (6 items)
   {
     id: '1',
     name: 'Signature Star Latte',
@@ -24,15 +25,6 @@ const DEFAULT_MENU_ITEMS = [
   },
   {
     id: '3',
-    name: 'Velvet Cold Brew',
-    category: 'cold',
-    price: 5.25,
-    description: 'Steeped for 18 hours in cold spring water. Smooth, low acidity with deep dark chocolate undertones.',
-    badge: 'Smooth',
-    image: 'https://images.unsplash.com/photo-1517701550927-30cf4ba1dba5?q=80&w=800&auto=format&fit=crop'
-  },
-  {
-    id: '4',
     name: 'Traditional Cortado',
     category: 'espresso',
     price: 4.75,
@@ -41,7 +33,36 @@ const DEFAULT_MENU_ITEMS = [
     image: 'https://images.unsplash.com/photo-1534778101976-62847782c213?q=80&w=800&auto=format&fit=crop'
   },
   {
+    id: '4',
+    name: 'Classic Flat White',
+    category: 'espresso',
+    price: 5.25,
+    description: 'Rich ristretto shots crowned with micro-textured velvety milk and a delicate latte art finish.',
+    badge: null,
+    image: 'https://images.unsplash.com/photo-1577968897966-3d4325b36b61?q=80&w=800&auto=format&fit=crop'
+  },
+  {
     id: '5',
+    name: 'Honduras Dark Roast Espresso',
+    category: 'espresso',
+    price: 4.50,
+    description: 'Bold double shot with intense body, bittersweet cocoa notes, and a clean caramel finish.',
+    badge: 'Strong',
+    image: 'https://images.unsplash.com/photo-1510591509098-f4fdc6d0ff04?q=80&w=800&auto=format&fit=crop'
+  },
+  {
+    id: '6',
+    name: 'Macchiato Superior',
+    category: 'espresso',
+    price: 4.25,
+    description: 'Single origin espresso stained with a dollop of silky oat microfoam.',
+    badge: null,
+    image: 'https://images.unsplash.com/photo-1485808191679-edf86b1fb66c?q=80&w=800&auto=format&fit=crop'
+  },
+
+  // Specialty Lattes (5 items)
+  {
+    id: '7',
     name: 'Ceremonial Matcha Latte',
     category: 'specialty',
     price: 6.75,
@@ -50,16 +71,54 @@ const DEFAULT_MENU_ITEMS = [
     image: 'https://images.unsplash.com/photo-1536256263959-770b48d82b08?q=80&w=800&auto=format&fit=crop'
   },
   {
-    id: '6',
+    id: '8',
     name: 'Golden Turmeric Chai',
     category: 'specialty',
     price: 6.00,
     description: 'Spiced black tea infused with fresh turmeric root, ginger, cardamom, and steamed almond milk.',
-    badge: null,
+    badge: 'Wellness',
     image: 'https://images.unsplash.com/photo-1576092768241-dec231879fc3?q=80&w=800&auto=format&fit=crop'
   },
   {
-    id: '7',
+    id: '9',
+    name: 'Madagascar Vanilla Bean Mocha',
+    category: 'specialty',
+    price: 6.85,
+    description: 'Dark single-origin chocolate ganache melted with double espresso, steamed milk, and vanilla caviar.',
+    badge: 'Decadent',
+    image: 'https://images.unsplash.com/photo-1530373239216-42518e6b4039?q=80&w=800&auto=format&fit=crop'
+  },
+  {
+    id: '10',
+    name: 'Lavender Honey Raf',
+    category: 'specialty',
+    price: 6.50,
+    description: 'Espresso whipped with heavy cream, lavender blossom infusion, and wildflower honey.',
+    badge: 'Chef Choice',
+    image: 'https://images.unsplash.com/photo-1544787219-7f47ccb76574?q=80&w=800&auto=format&fit=crop'
+  },
+  {
+    id: '11',
+    name: 'Salted Caramel Macadamia Latte',
+    category: 'specialty',
+    price: 6.95,
+    description: 'Macadamia nut milk, house-made salted caramel drizzle, and double espresso.',
+    badge: 'Popular',
+    image: 'https://images.unsplash.com/photo-1572442388796-11668a67e53d?q=80&w=800&auto=format&fit=crop'
+  },
+
+  // Cold & Iced Brews (5 items)
+  {
+    id: '12',
+    name: 'Velvet Cold Brew',
+    category: 'cold',
+    price: 5.25,
+    description: 'Steeped for 18 hours in cold spring water. Smooth, low acidity with deep dark chocolate undertones.',
+    badge: 'Smooth',
+    image: 'https://images.unsplash.com/photo-1517701550927-30cf4ba1dba5?q=80&w=800&auto=format&fit=crop'
+  },
+  {
+    id: '13',
     name: 'Nitro Cold Brew Float',
     category: 'cold',
     price: 7.25,
@@ -68,7 +127,7 @@ const DEFAULT_MENU_ITEMS = [
     image: 'https://images.unsplash.com/photo-1572442388796-11668a67e53d?q=80&w=800&auto=format&fit=crop'
   },
   {
-    id: '8',
+    id: '14',
     name: 'Iced Spanish Latte',
     category: 'cold',
     price: 6.25,
@@ -77,7 +136,27 @@ const DEFAULT_MENU_ITEMS = [
     image: 'https://images.unsplash.com/photo-1517701550927-30cf4ba1dba5?q=80&w=800&auto=format&fit=crop'
   },
   {
-    id: '9',
+    id: '15',
+    name: 'Sparkling Cascara Tonic',
+    category: 'cold',
+    price: 5.85,
+    description: 'Coffee cherry tea infused with botanicals, chilled and charged with effervescent sparkling water.',
+    badge: 'Refreshing',
+    image: 'https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?q=80&w=800&auto=format&fit=crop'
+  },
+  {
+    id: '16',
+    name: 'Iced Coconut Cold Brew',
+    category: 'cold',
+    price: 6.00,
+    description: 'Cold brew layered over refreshing organic coconut water and a splash of oat milk.',
+    badge: 'Tropical',
+    image: 'https://images.unsplash.com/photo-1461023058943-07fcbe16d735?q=80&w=800&auto=format&fit=crop'
+  },
+
+  // Artisanal Bakery (5 items)
+  {
+    id: '17',
     name: 'Almond Butter Croissant',
     category: 'bakery',
     price: 4.50,
@@ -86,13 +165,40 @@ const DEFAULT_MENU_ITEMS = [
     image: 'https://images.unsplash.com/photo-1555507036-ab1f4038808a?q=80&w=800&auto=format&fit=crop'
   },
   {
-    id: '10',
+    id: '18',
     name: 'Cardamom Morning Bun',
     category: 'bakery',
     price: 4.25,
     description: 'Laminated brioche dough rolled with aromatic crushed cardamom, organic cane sugar, and orange zest.',
     badge: null,
     image: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?q=80&w=800&auto=format&fit=crop'
+  },
+  {
+    id: '19',
+    name: 'Dark Chocolate Sea Salt Scone',
+    category: 'bakery',
+    price: 4.00,
+    description: 'Buttery artisanal scone loaded with Valrhona dark chocolate chunks and flaked Maldon sea salt.',
+    badge: 'Artisanal',
+    image: 'https://images.unsplash.com/photo-1587314168485-3236d6710814?q=80&w=800&auto=format&fit=crop'
+  },
+  {
+    id: '20',
+    name: 'Pistachio Rose Cake',
+    category: 'bakery',
+    price: 5.50,
+    description: 'Moist pistachio sponge cake layered with delicate rosewater buttercream and crushed pistachios.',
+    badge: 'Signature',
+    image: 'https://images.unsplash.com/photo-1535141192574-5d4897c13136?q=80&w=800&auto=format&fit=crop'
+  },
+  {
+    id: '21',
+    name: 'Avocado Sourdough Toast',
+    category: 'bakery',
+    price: 7.50,
+    description: 'Thick-cut house sourdough, smashed avocado, heirloom cherry tomatoes, sesame seeds, and chili oil.',
+    badge: 'Brunch',
+    image: 'https://images.unsplash.com/photo-1525351484163-7529414344d8?q=80&w=800&auto=format&fit=crop'
   }
 ];
 
