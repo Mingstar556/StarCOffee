@@ -9,7 +9,7 @@ export interface MenuItem {
 }
 
 export const INITIAL_MENU_ITEMS: MenuItem[] = [
-  // Espresso & Brews
+  // Espresso & Brews (6 items)
   {
     id: '1',
     name: 'Signature Star Latte',
@@ -65,7 +65,7 @@ export const INITIAL_MENU_ITEMS: MenuItem[] = [
     image: 'https://images.unsplash.com/photo-1485808191679-edf86b1fb66c?q=80&w=800&auto=format&fit=crop'
   },
 
-  // Specialty Lattes
+  // Specialty Lattes (5 items)
   {
     id: '7',
     name: 'Ceremonial Matcha Latte',
@@ -112,7 +112,7 @@ export const INITIAL_MENU_ITEMS: MenuItem[] = [
     image: 'https://images.unsplash.com/photo-1572442388796-11668a67e53d?q=80&w=800&auto=format&fit=crop'
   },
 
-  // Cold & Iced Brews
+  // Cold & Iced Brews (5 items)
   {
     id: '12',
     name: 'Velvet Cold Brew',
@@ -159,7 +159,7 @@ export const INITIAL_MENU_ITEMS: MenuItem[] = [
     image: 'https://images.unsplash.com/photo-1461023058943-07fcbe16d735?q=80&w=800&auto=format&fit=crop'
   },
 
-  // Artisanal Bakery
+  // Artisanal Bakery (5 items)
   {
     id: '17',
     name: 'Almond Butter Croissant',
