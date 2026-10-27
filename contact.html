@@ -32,7 +32,8 @@
   </script>
   <style>
     body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #1b1412; color: #fcf8f2; overflow-x: hidden; }
-    .glass { background: rgba(44, 34, 30, 0.75); backdrop-filter: blur(16px); border: 1px solid rgba(200, 138, 88, 0.2); }
+    .glass { background: rgba(44, 34, 30, 0.75); backdrop-filter: blur(16px); border: 1px solid rgba(200, 138, 88, 0.2); transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+    .glass:hover { border-color: rgba(200, 138, 88, 0.4); }
 
     /* Preloader */
     #preloader {
@@ -44,7 +45,7 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      transition: opacity 0.6s ease, visibility 0.6s ease;
+      transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.5s;
     }
     .spinner-star {
       width: 60px;
@@ -56,13 +57,23 @@
       justify-content: center;
       font-size: 32px;
       color: #1b1412;
-      animation: spinPulse 2s infinite ease-in-out;
+      animation: spinPulse 2s infinite cubic-bezier(0.16, 1, 0.3, 1);
       box-shadow: 0 0 30px rgba(200, 138, 88, 0.4);
     }
     @keyframes spinPulse {
       0% { transform: scale(0.9) rotate(0deg); }
       50% { transform: scale(1.1) rotate(180deg); }
       100% { transform: scale(0.9) rotate(360deg); }
+    }
+
+    /* Respect prefers-reduced-motion */
+    @media (prefers-reduced-motion: reduce) {
+      *, ::before, ::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
     }
   </style>
 </head>
@@ -78,25 +89,25 @@
   <header class="fixed top-0 left-0 right-0 z-50 px-6 py-4 transition-all duration-300" id="navbar">
     <nav class="max-w-7xl mx-auto glass rounded-2xl px-6 py-4 flex items-center justify-between shadow-2xl">
       <a href="index.html" class="flex items-center gap-3 group">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber to-gold flex items-center justify-center text-espresso font-serif font-bold text-xl shadow-lg shadow-amber/20 group-hover:scale-110 transition-transform">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber to-gold flex items-center justify-center text-espresso font-serif font-bold text-xl shadow-lg shadow-amber/20 group-hover:scale-110 transition-transform duration-300">
           ★
         </div>
         <span class="font-serif text-2xl font-bold tracking-tight text-cream">Star Coffee</span>
       </a>
       <div class="hidden md:flex items-center gap-8 font-medium text-sm text-warmgray">
-        <a href="index.html" class="hover:text-cream transition-colors">Home</a>
-        <a href="menu.html" class="hover:text-cream transition-colors">Menu</a>
-        <a href="contact.html" class="text-cream font-semibold transition-colors">Location & Contact</a>
+        <a href="index.html" class="hover:text-cream transition-colors duration-200">Home</a>
+        <a href="menu.html" class="hover:text-cream transition-colors duration-200">Menu</a>
+        <a href="contact.html" class="text-cream font-semibold transition-colors duration-200">Location & Contact</a>
       </div>
       <div class="flex items-center gap-4">
-        <button id="cart-toggle-btn" class="relative p-2.5 rounded-xl glass hover:border-amber/50 transition-colors flex items-center justify-center text-cream hover:scale-105">
+        <button id="cart-toggle-btn" class="relative p-2.5 rounded-xl glass hover:border-amber/50 transition-all duration-300 flex items-center justify-center text-cream hover:scale-105 active:scale-95">
           <svg class="w-5 h-5 text-amber" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
           <span id="cart-badge" class="absolute -top-1.5 -right-1.5 w-5 h-5 bg-amber text-espresso text-xs font-bold rounded-full flex items-center justify-center shadow-md scale-0 transition-transform duration-300">0</span>
         </button>
-        <a href="menu.html" class="hidden sm:inline-flex items-center justify-center px-5 py-2.5 rounded-xl bg-amber text-espresso font-semibold text-sm hover:bg-gold transition-all shadow-lg shadow-amber/20 hover:scale-105">
+        <a href="menu.html" class="hidden sm:inline-flex items-center justify-center px-5 py-2.5 rounded-xl bg-amber text-espresso font-semibold text-sm hover:bg-gold transition-all duration-300 shadow-lg shadow-amber/20 hover:scale-105 active:scale-95">
           Order Online
         </a>
-        <button id="menu-btn" class="md:hidden w-10 h-10 rounded-xl glass flex flex-col items-center justify-center gap-1.5 focus:outline-none">
+        <button id="menu-btn" class="md:hidden w-10 h-10 rounded-xl glass flex flex-col items-center justify-center gap-1.5 focus:outline-none transition-transform active:scale-95">
           <span class="w-5 h-0.5 bg-cream"></span>
           <span class="w-5 h-0.5 bg-cream"></span>
         </button>
@@ -119,7 +130,7 @@
         <span class="text-2xl">🛒</span>
         <h3 class="font-serif text-xl font-bold">Your Order</h3>
       </div>
-      <button id="cart-close-btn" class="w-9 h-9 rounded-xl glass flex items-center justify-center text-warmgray hover:text-cream">✕</button>
+      <button id="cart-close-btn" class="w-9 h-9 rounded-xl glass flex items-center justify-center text-warmgray hover:text-cream transition-transform active:scale-95">✕</button>
     </div>
     <div id="cart-items-container" class="flex-1 overflow-y-auto py-6 space-y-4">
       <div class="text-center text-warmgray py-12">Your cart is currently empty.</div>
@@ -133,7 +144,7 @@
         <span>Total</span>
         <span id="cart-total" class="text-amber">$0.00</span>
       </div>
-      <button id="checkout-btn" class="w-full py-4 rounded-xl bg-amber text-espresso font-semibold hover:bg-gold transition-all shadow-lg shadow-amber/20 hover:scale-[1.02]">
+      <button id="checkout-btn" class="w-full py-4 rounded-xl bg-amber text-espresso font-semibold hover:bg-gold transition-all duration-300 shadow-lg shadow-amber/20 hover:scale-[1.02] active:scale-95">
         Proceed to Checkout
       </button>
     </div>
@@ -233,7 +244,7 @@
             <label class="text-xs uppercase tracking-wider text-warmgray font-semibold">Message</label>
             <textarea rows="4" required class="w-full bg-coffee border border-coffee/80 rounded-xl px-4 py-3.5 text-cream placeholder-warmgray/50 focus:outline-none focus:border-amber transition-colors text-sm resize-none" placeholder="How can we help you?"></textarea>
           </div>
-          <button type="submit" class="w-full py-4 rounded-xl bg-amber text-espresso font-semibold hover:bg-gold transition-colors shadow-lg shadow-amber/20 hover:scale-[1.02]">
+          <button type="submit" class="w-full py-4 rounded-xl bg-amber text-espresso font-semibold hover:bg-gold transition-all duration-300 shadow-lg shadow-amber/20 hover:scale-[1.02] active:scale-95">
             Send Message
           </button>
         </form>
@@ -251,9 +262,9 @@
       </div>
       <div>© 2026 Star Coffee Roasters. All rights reserved.</div>
       <div class="flex items-center gap-6">
-        <a href="index.html" class="hover:text-cream transition-colors">Home</a>
-        <a href="menu.html" class="hover:text-cream transition-colors">Menu</a>
-        <a href="contact.html" class="hover:text-cream transition-colors">Contact</a>
+        <a href="index.html" class="hover:text-cream transition-colors duration-200">Home</a>
+        <a href="menu.html" class="hover:text-cream transition-colors duration-200">Menu</a>
+        <a href="contact.html" class="hover:text-cream transition-colors duration-200">Contact</a>
       </div>
     </div>
   </footer>
@@ -263,7 +274,7 @@
     window.addEventListener('load', () => {
       const preloader = document.getElementById('preloader');
       preloader.style.opacity = '0';
-      setTimeout(() => preloader.style.display = 'none', 600);
+      setTimeout(() => preloader.style.display = 'none', 500);
     });
 
     // Mobile menu toggle
@@ -319,9 +330,9 @@
             <div class="text-amber text-sm font-semibold">$${(item.price * item.quantity).toFixed(2)}</div>
           </div>
           <div class="flex items-center gap-3">
-            <button onclick="adjustQuantity(${index}, -1)" class="w-8 h-8 rounded-lg glass flex items-center justify-center text-cream hover:bg-amber hover:text-espresso transition-colors">-</button>
+            <button onclick="adjustQuantity(${index}, -1)" class="w-8 h-8 rounded-lg glass flex items-center justify-center text-cream hover:bg-amber hover:text-espresso transition-colors duration-200 active:scale-95">-</button>
             <span class="font-bold text-cream">${item.quantity}</span>
-            <button onclick="adjustQuantity(${index}, 1)" class="w-8 h-8 rounded-lg glass flex items-center justify-center text-cream hover:bg-amber hover:text-espresso transition-colors">+</button>
+            <button onclick="adjustQuantity(${index}, 1)" class="w-8 h-8 rounded-lg glass flex items-center justify-center text-cream hover:bg-amber hover:text-espresso transition-colors duration-200 active:scale-95">+</button>
           </div>
         </div>
       `).join('');
@@ -349,38 +360,41 @@
 
     updateCart();
 
-    // GSAP ScrollTrigger Animations
-    gsap.registerPlugin(ScrollTrigger);
+    // GSAP ScrollTrigger Animations (Snappy & Respecting prefers-reduced-motion)
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!prefersReduced) {
+      gsap.registerPlugin(ScrollTrigger);
 
-    gsap.from('.contact-header > *', {
-      opacity: 0,
-      y: 40,
-      duration: 1,
-      stagger: 0.2,
-      ease: 'power3.out'
-    });
+      gsap.from('.contact-header > *', {
+        opacity: 0,
+        y: 30,
+        duration: 0.6,
+        stagger: 0.15,
+        ease: 'power3.out'
+      });
 
-    gsap.from('.info-col', {
-      scrollTrigger: {
-        trigger: '.contact-content',
-        start: 'top 80%'
-      },
-      opacity: 0,
-      x: -50,
-      duration: 1,
-      ease: 'power3.out'
-    });
+      gsap.from('.info-col', {
+        scrollTrigger: {
+          trigger: '.contact-content',
+          start: 'top 85%'
+        },
+        opacity: 0,
+        x: -40,
+        duration: 0.6,
+        ease: 'power3.out'
+      });
 
-    gsap.from('.form-col', {
-      scrollTrigger: {
-        trigger: '.contact-content',
-        start: 'top 80%'
-      },
-      opacity: 0,
-      x: 50,
-      duration: 1,
-      ease: 'power3.out'
-    });
+      gsap.from('.form-col', {
+        scrollTrigger: {
+          trigger: '.contact-content',
+          start: 'top 85%'
+        },
+        opacity: 0,
+        x: 40,
+        duration: 0.6,
+        ease: 'power3.out'
+      });
+    }
   </script>
 </body>
 </html>

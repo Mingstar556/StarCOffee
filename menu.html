@@ -32,7 +32,8 @@
   </script>
   <style>
     body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #1b1412; color: #fcf8f2; overflow-x: hidden; }
-    .glass { background: rgba(44, 34, 30, 0.75); backdrop-filter: blur(16px); border: 1px solid rgba(200, 138, 88, 0.2); }
+    .glass { background: rgba(44, 34, 30, 0.75); backdrop-filter: blur(16px); border: 1px solid rgba(200, 138, 88, 0.2); transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+    .glass:hover { border-color: rgba(200, 138, 88, 0.4); transform: translateY(-4px); box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
 
     /* Preloader */
     #preloader {
@@ -44,7 +45,7 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      transition: opacity 0.6s ease, visibility 0.6s ease;
+      transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.5s;
     }
     .spinner-star {
       width: 60px;
@@ -56,13 +57,22 @@
       justify-content: center;
       font-size: 32px;
       color: #1b1412;
-      animation: spinPulse 2s infinite ease-in-out;
+      animation: spinPulse 2s infinite cubic-bezier(0.16, 1, 0.3, 1);
       box-shadow: 0 0 30px rgba(200, 138, 88, 0.4);
     }
     @keyframes spinPulse {
       0% { transform: scale(0.9) rotate(0deg); }
       50% { transform: scale(1.1) rotate(180deg); }
       100% { transform: scale(0.9) rotate(360deg); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, ::before, ::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
     }
   </style>
 </head>
@@ -78,25 +88,25 @@
   <header class="fixed top-0 left-0 right-0 z-50 px-6 py-4 transition-all duration-300" id="navbar">
     <nav class="max-w-7xl mx-auto glass rounded-2xl px-6 py-4 flex items-center justify-between shadow-2xl">
       <a href="index.html" class="flex items-center gap-3 group">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber to-gold flex items-center justify-center text-espresso font-serif font-bold text-xl shadow-lg shadow-amber/20 group-hover:scale-110 transition-transform">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber to-gold flex items-center justify-center text-espresso font-serif font-bold text-xl shadow-lg shadow-amber/20 group-hover:scale-110 transition-transform duration-300">
           ★
         </div>
         <span class="font-serif text-2xl font-bold tracking-tight text-cream">Star Coffee</span>
       </a>
       <div class="hidden md:flex items-center gap-8 font-medium text-sm text-warmgray">
-        <a href="index.html" class="hover:text-cream transition-colors">Home</a>
-        <a href="menu.html" class="text-cream font-semibold transition-colors">Menu</a>
-        <a href="contact.html" class="hover:text-cream transition-colors">Location & Contact</a>
+        <a href="index.html" class="hover:text-cream transition-colors duration-200">Home</a>
+        <a href="menu.html" class="text-cream font-semibold transition-colors duration-200">Menu</a>
+        <a href="contact.html" class="hover:text-cream transition-colors duration-200">Location & Contact</a>
       </div>
       <div class="flex items-center gap-4">
-        <button id="cart-toggle-btn" class="relative p-2.5 rounded-xl glass hover:border-amber/50 transition-colors flex items-center justify-center text-cream hover:scale-105">
+        <button id="admin-modal-btn" class="hidden sm:inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl glass text-warmgray hover:text-cream font-medium text-sm transition-all hover:border-amber/40 active:scale-95" title="Add New Coffee Item">
+          <span>+ Add Coffee</span>
+        </button>
+        <button id="cart-toggle-btn" class="relative p-2.5 rounded-xl glass hover:border-amber/50 transition-all duration-300 flex items-center justify-center text-cream hover:scale-105 active:scale-95">
           <svg class="w-5 h-5 text-amber" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
           <span id="cart-badge" class="absolute -top-1.5 -right-1.5 w-5 h-5 bg-amber text-espresso text-xs font-bold rounded-full flex items-center justify-center shadow-md scale-0 transition-transform duration-300">0</span>
         </button>
-        <a href="menu.html" class="hidden sm:inline-flex items-center justify-center px-5 py-2.5 rounded-xl bg-amber text-espresso font-semibold text-sm hover:bg-gold transition-all shadow-lg shadow-amber/20 hover:scale-105">
-          Order Online
-        </a>
-        <button id="menu-btn" class="md:hidden w-10 h-10 rounded-xl glass flex flex-col items-center justify-center gap-1.5 focus:outline-none">
+        <button id="menu-btn" class="md:hidden w-10 h-10 rounded-xl glass flex flex-col items-center justify-center gap-1.5 focus:outline-none transition-transform active:scale-95">
           <span class="w-5 h-0.5 bg-cream"></span>
           <span class="w-5 h-0.5 bg-cream"></span>
         </button>
@@ -109,7 +119,62 @@
     <a href="index.html" class="text-warmgray hover:text-cream">Home</a>
     <a href="menu.html" class="text-amber">Menu</a>
     <a href="contact.html" class="text-warmgray hover:text-cream">Location & Contact</a>
+    <button onclick="openAdminModal(); document.getElementById('mobile-menu').classList.add('translate-x-full');" class="text-warmgray hover:text-cream text-xl font-sans">+ Add Coffee Item</button>
     <a href="menu.html" class="px-8 py-3 rounded-xl bg-amber text-espresso font-sans font-semibold text-base shadow-lg shadow-amber/20">Order Online</a>
+  </div>
+
+  <!-- Admin Add Coffee Modal -->
+  <div id="admin-modal" class="fixed inset-0 z-50 bg-espresso/85 backdrop-blur-xl flex items-center justify-center p-6 opacity-0 pointer-events-none transition-opacity duration-300">
+    <div class="glass max-w-lg w-full p-8 rounded-3xl space-y-6 relative border border-amber/30 shadow-2xl scale-95 transition-transform duration-300" id="admin-modal-card">
+      <div class="flex items-center justify-between pb-4 border-b border-coffee">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-amber/10 flex items-center justify-center text-amber text-xl">☕</div>
+          <h3 class="font-serif text-2xl font-bold">Add New Coffee Item</h3>
+        </div>
+        <button id="admin-close-btn" class="w-9 h-9 rounded-xl glass flex items-center justify-center text-warmgray hover:text-cream">✕</button>
+      </div>
+      <form id="add-coffee-form" class="space-y-4">
+        <div class="space-y-1.5">
+          <label class="text-xs uppercase tracking-wider text-warmgray font-semibold">Coffee Name</label>
+          <input type="text" id="coffee-name" required class="w-full bg-coffee border border-coffee rounded-xl px-4 py-3 text-cream placeholder-warmgray/50 text-sm focus:outline-none focus:border-amber" placeholder="e.g. Vanilla Bean Cold Brew">
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <div class="space-y-1.5">
+            <label class="text-xs uppercase tracking-wider text-warmgray font-semibold">Category</label>
+            <select id="coffee-category" class="w-full bg-coffee border border-coffee rounded-xl px-4 py-3 text-cream text-sm focus:outline-none focus:border-amber">
+              <option value="espresso">Espresso & Brews</option>
+              <option value="specialty">Specialty Lattes</option>
+              <option value="cold">Cold & Iced</option>
+              <option value="bakery">Bakery & Pastries</option>
+            </select>
+          </div>
+          <div class="space-y-1.5">
+            <label class="text-xs uppercase tracking-wider text-warmgray font-semibold">Price ($)</label>
+            <input type="number" step="0.01" id="coffee-price" required class="w-full bg-coffee border border-coffee rounded-xl px-4 py-3 text-cream text-sm focus:outline-none focus:border-amber" placeholder="5.50">
+          </div>
+        </div>
+        <div class="space-y-1.5">
+          <label class="text-xs uppercase tracking-wider text-warmgray font-semibold">Badge (Optional)</label>
+          <input type="text" id="coffee-badge" class="w-full bg-coffee border border-coffee rounded-xl px-4 py-3 text-cream placeholder-warmgray/50 text-sm focus:outline-none focus:border-amber" placeholder="e.g. New, Best Seller, Organic">
+        </div>
+        <div class="space-y-1.5">
+          <label class="text-xs uppercase tracking-wider text-warmgray font-semibold">Description</label>
+          <textarea id="coffee-desc" rows="3" required class="w-full bg-coffee border border-coffee rounded-xl px-4 py-3 text-cream placeholder-warmgray/50 text-sm resize-none focus:outline-none focus:border-amber" placeholder="Rich tasting notes and ingredients..."></textarea>
+        </div>
+        <div class="space-y-1.5">
+          <label class="text-xs uppercase tracking-wider text-warmgray font-semibold">Image URL (Optional)</label>
+          <input type="url" id="coffee-image" class="w-full bg-coffee border border-coffee rounded-xl px-4 py-3 text-cream placeholder-warmgray/50 text-sm focus:outline-none focus:border-amber" placeholder="https://images.unsplash.com/...">
+        </div>
+        <div class="pt-2 flex gap-4">
+          <button type="submit" class="flex-1 py-3.5 rounded-xl bg-amber text-espresso font-semibold hover:bg-gold transition-colors shadow-lg shadow-amber/20">
+            Publish to Menu
+          </button>
+          <button type="button" id="reset-default-btn" class="px-4 py-3.5 rounded-xl glass text-warmgray hover:text-cream text-xs font-semibold transition-colors">
+            Reset Defaults
+          </button>
+        </div>
+      </form>
+    </div>
   </div>
 
   <!-- Shopping Cart Slide-over Drawer -->
@@ -119,7 +184,7 @@
         <span class="text-2xl">🛒</span>
         <h3 class="font-serif text-xl font-bold">Your Order</h3>
       </div>
-      <button id="cart-close-btn" class="w-9 h-9 rounded-xl glass flex items-center justify-center text-warmgray hover:text-cream">✕</button>
+      <button id="cart-close-btn" class="w-9 h-9 rounded-xl glass flex items-center justify-center text-warmgray hover:text-cream transition-transform active:scale-95">✕</button>
     </div>
     <div id="cart-items-container" class="flex-1 overflow-y-auto py-6 space-y-4">
       <div class="text-center text-warmgray py-12">Your cart is currently empty.</div>
@@ -133,7 +198,7 @@
         <span>Total</span>
         <span id="cart-total" class="text-amber">$0.00</span>
       </div>
-      <button id="checkout-btn" class="w-full py-4 rounded-xl bg-amber text-espresso font-semibold hover:bg-gold transition-all shadow-lg shadow-amber/20 hover:scale-[1.02]">
+      <button id="checkout-btn" class="w-full py-4 rounded-xl bg-amber text-espresso font-semibold hover:bg-gold transition-all duration-300 shadow-lg shadow-amber/20 hover:scale-[1.02] active:scale-95">
         Proceed to Checkout
       </button>
     </div>
@@ -162,165 +227,19 @@
       </div>
       <!-- Category Tabs -->
       <div class="flex items-center gap-2 overflow-x-auto w-full md:w-auto pb-2 md:pb-0">
-        <button onclick="filterCategory('all')" class="cat-btn px-5 py-2.5 rounded-xl bg-amber text-espresso font-semibold text-sm whitespace-nowrap transition-all shadow-md">All Items</button>
-        <button onclick="filterCategory('espresso')" class="cat-btn px-5 py-2.5 rounded-xl glass text-warmgray hover:text-cream font-medium text-sm whitespace-nowrap transition-all">Espresso & Brews</button>
-        <button onclick="filterCategory('specialty')" class="cat-btn px-5 py-2.5 rounded-xl glass text-warmgray hover:text-cream font-medium text-sm whitespace-nowrap transition-all">Specialty Lattes</button>
-        <button onclick="filterCategory('cold')" class="cat-btn px-5 py-2.5 rounded-xl glass text-warmgray hover:text-cream font-medium text-sm whitespace-nowrap transition-all">Cold & Iced</button>
-        <button onclick="filterCategory('bakery')" class="cat-btn px-5 py-2.5 rounded-xl glass text-warmgray hover:text-cream font-medium text-sm whitespace-nowrap transition-all">Bakery</button>
+        <button onclick="filterCategory('all')" class="cat-btn px-5 py-2.5 rounded-xl bg-amber text-espresso font-semibold text-sm whitespace-nowrap transition-all duration-300 shadow-md active:scale-95">All Items</button>
+        <button onclick="filterCategory('espresso')" class="cat-btn px-5 py-2.5 rounded-xl glass text-warmgray hover:text-cream font-medium text-sm whitespace-nowrap transition-all duration-300 active:scale-95">Espresso & Brews</button>
+        <button onclick="filterCategory('specialty')" class="cat-btn px-5 py-2.5 rounded-xl glass text-warmgray hover:text-cream font-medium text-sm whitespace-nowrap transition-all duration-300 active:scale-95">Specialty Lattes</button>
+        <button onclick="filterCategory('cold')" class="cat-btn px-5 py-2.5 rounded-xl glass text-warmgray hover:text-cream font-medium text-sm whitespace-nowrap transition-all duration-300 active:scale-95">Cold & Iced</button>
+        <button onclick="filterCategory('bakery')" class="cat-btn px-5 py-2.5 rounded-xl glass text-warmgray hover:text-cream font-medium text-sm whitespace-nowrap transition-all duration-300 active:scale-95">Bakery</button>
       </div>
     </div>
   </div>
 
-  <!-- Menu Grid -->
+  <!-- Dynamic Menu Grid -->
   <section class="pb-28 px-6 max-w-7xl mx-auto">
     <div id="menu-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8">
-
-      <!-- Item 1 -->
-      <div class="menu-item glass p-6 rounded-3xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 hover:border-amber/40 transition-all duration-300 group hover:-translate-y-1" data-category="espresso" data-name="signature star latte">
-        <div class="space-y-2 flex-1">
-          <div class="flex items-center gap-3">
-            <h3 class="font-serif text-2xl font-bold group-hover:text-amber transition-colors">Signature Star Latte</h3>
-            <span class="px-2.5 py-0.5 rounded-full bg-amber/10 text-amber text-xs font-bold">Best Seller</span>
-          </div>
-          <p class="text-warmgray text-sm leading-relaxed">Double shot of espresso, velvety microfoam, organic wildflower honey, and a dusting of cinnamon.</p>
-          <div class="text-amber font-serif font-bold text-xl">$6.50</div>
-        </div>
-        <button onclick="addToCart('Signature Star Latte', 6.50)" class="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-amber/10 text-amber font-semibold hover:bg-amber hover:text-espresso transition-all shadow-lg shrink-0 active:scale-95">
-          Add to Order
-        </button>
-      </div>
-
-      <!-- Item 2 -->
-      <div class="menu-item glass p-6 rounded-3xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 hover:border-amber/40 transition-all duration-300 group hover:-translate-y-1" data-category="espresso" data-name="ethiopian pour over">
-        <div class="space-y-2 flex-1">
-          <div class="flex items-center gap-3">
-            <h3 class="font-serif text-2xl font-bold group-hover:text-amber transition-colors">Ethiopian Pour Over</h3>
-            <span class="px-2.5 py-0.5 rounded-full bg-gold/10 text-gold text-xs font-bold">Single Origin</span>
-          </div>
-          <p class="text-warmgray text-sm leading-relaxed">Single origin Yirgacheffe brewed meticulously. Bright notes of bergamot, jasmine, and stone fruit.</p>
-          <div class="text-amber font-serif font-bold text-xl">$5.75</div>
-        </div>
-        <button onclick="addToCart('Ethiopian Pour Over', 5.75)" class="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-amber/10 text-amber font-semibold hover:bg-amber hover:text-espresso transition-all shadow-lg shrink-0 active:scale-95">
-          Add to Order
-        </button>
-      </div>
-
-      <!-- Item 3 -->
-      <div class="menu-item glass p-6 rounded-3xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 hover:border-amber/40 transition-all duration-300 group hover:-translate-y-1" data-category="cold" data-name="velvet cold brew">
-        <div class="space-y-2 flex-1">
-          <div class="flex items-center gap-3">
-            <h3 class="font-serif text-2xl font-bold group-hover:text-amber transition-colors">Velvet Cold Brew</h3>
-            <span class="px-2.5 py-0.5 rounded-full bg-amber/10 text-amber text-xs font-bold">Smooth</span>
-          </div>
-          <p class="text-warmgray text-sm leading-relaxed">Steeped for 18 hours in cold spring water. Smooth, low acidity with deep dark chocolate undertones.</p>
-          <div class="text-amber font-serif font-bold text-xl">$5.25</div>
-        </div>
-        <button onclick="addToCart('Velvet Cold Brew', 5.25)" class="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-amber/10 text-amber font-semibold hover:bg-amber hover:text-espresso transition-all shadow-lg shrink-0 active:scale-95">
-          Add to Order
-        </button>
-      </div>
-
-      <!-- Item 4 -->
-      <div class="menu-item glass p-6 rounded-3xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 hover:border-amber/40 transition-all duration-300 group hover:-translate-y-1" data-category="espresso" data-name="traditional cortado">
-        <div class="space-y-2 flex-1">
-          <div class="flex items-center gap-3">
-            <h3 class="font-serif text-2xl font-bold group-hover:text-amber transition-colors">Traditional Cortado</h3>
-          </div>
-          <p class="text-warmgray text-sm leading-relaxed">Equal parts robust espresso and steamed textured milk, served in a classic glass.</p>
-          <div class="text-amber font-serif font-bold text-xl">$4.75</div>
-        </div>
-        <button onclick="addToCart('Traditional Cortado', 4.75)" class="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-amber/10 text-amber font-semibold hover:bg-amber hover:text-espresso transition-all shadow-lg shrink-0 active:scale-95">
-          Add to Order
-        </button>
-      </div>
-
-      <!-- Item 5 -->
-      <div class="menu-item glass p-6 rounded-3xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 hover:border-amber/40 transition-all duration-300 group hover:-translate-y-1" data-category="specialty" data-name="ceremonial matcha latte">
-        <div class="space-y-2 flex-1">
-          <div class="flex items-center gap-3">
-            <h3 class="font-serif text-2xl font-bold group-hover:text-amber transition-colors">Ceremonial Matcha Latte</h3>
-            <span class="px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 text-xs font-bold">Organic</span>
-          </div>
-          <p class="text-warmgray text-sm leading-relaxed">Uji ceremonial grade green tea whisked smooth with steamed oat milk and vanilla bean syrup.</p>
-          <div class="text-amber font-serif font-bold text-xl">$6.75</div>
-        </div>
-        <button onclick="addToCart('Ceremonial Matcha Latte', 6.75)" class="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-amber/10 text-amber font-semibold hover:bg-amber hover:text-espresso transition-all shadow-lg shrink-0 active:scale-95">
-          Add to Order
-        </button>
-      </div>
-
-      <!-- Item 6 -->
-      <div class="menu-item glass p-6 rounded-3xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 hover:border-amber/40 transition-all duration-300 group hover:-translate-y-1" data-category="specialty" data-name="golden turmeric chai">
-        <div class="space-y-2 flex-1">
-          <div class="flex items-center gap-3">
-            <h3 class="font-serif text-2xl font-bold group-hover:text-amber transition-colors">Golden Turmeric Chai</h3>
-          </div>
-          <p class="text-warmgray text-sm leading-relaxed">Spiced black tea infused with fresh turmeric root, ginger, cardamom, and steamed almond milk.</p>
-          <div class="text-amber font-serif font-bold text-xl">$6.00</div>
-        </div>
-        <button onclick="addToCart('Golden Turmeric Chai', 6.00)" class="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-amber/10 text-amber font-semibold hover:bg-amber hover:text-espresso transition-all shadow-lg shrink-0 active:scale-95">
-          Add to Order
-        </button>
-      </div>
-
-      <!-- Item 7 -->
-      <div class="menu-item glass p-6 rounded-3xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 hover:border-amber/40 transition-all duration-300 group hover:-translate-y-1" data-category="cold" data-name="nitro cold brew float">
-        <div class="space-y-2 flex-1">
-          <div class="flex items-center gap-3">
-            <h3 class="font-serif text-2xl font-bold group-hover:text-amber transition-colors">Nitro Cold Brew Float</h3>
-            <span class="px-2.5 py-0.5 rounded-full bg-amber/10 text-amber text-xs font-bold">Staff Pick</span>
-          </div>
-          <p class="text-warmgray text-sm leading-relaxed">Draft nitro cold brew topped with a scoop of organic Madagascar vanilla bean gelato.</p>
-          <div class="text-amber font-serif font-bold text-xl">$7.25</div>
-        </div>
-        <button onclick="addToCart('Nitro Cold Brew Float', 7.25)" class="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-amber/10 text-amber font-semibold hover:bg-amber hover:text-espresso transition-all shadow-lg shrink-0 active:scale-95">
-          Add to Order
-        </button>
-      </div>
-
-      <!-- Item 8 -->
-      <div class="menu-item glass p-6 rounded-3xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 hover:border-amber/40 transition-all duration-300 group hover:-translate-y-1" data-category="cold" data-name="iced spanish latte">
-        <div class="space-y-2 flex-1">
-          <div class="flex items-center gap-3">
-            <h3 class="font-serif text-2xl font-bold group-hover:text-amber transition-colors">Iced Spanish Latte</h3>
-          </div>
-          <p class="text-warmgray text-sm leading-relaxed">Espresso poured over ice with a layer of sweetened condensed milk and whole milk.</p>
-          <div class="text-amber font-serif font-bold text-xl">$6.25</div>
-        </div>
-        <button onclick="addToCart('Iced Spanish Latte', 6.25)" class="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-amber/10 text-amber font-semibold hover:bg-amber hover:text-espresso transition-all shadow-lg shrink-0 active:scale-95">
-          Add to Order
-        </button>
-      </div>
-
-      <!-- Item 9 -->
-      <div class="menu-item glass p-6 rounded-3xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 hover:border-amber/40 transition-all duration-300 group hover:-translate-y-1" data-category="bakery" data-name="almond butter croissant">
-        <div class="space-y-2 flex-1">
-          <div class="flex items-center gap-3">
-            <h3 class="font-serif text-2xl font-bold group-hover:text-amber transition-colors">Almond Butter Croissant</h3>
-            <span class="px-2.5 py-0.5 rounded-full bg-amber/10 text-amber text-xs font-bold">Freshly Baked</span>
-          </div>
-          <p class="text-warmgray text-sm leading-relaxed">Flaky, all-butter French croissant filled with rich almond frangipane and toasted sliced almonds.</p>
-          <div class="text-amber font-serif font-bold text-xl">$4.50</div>
-        </div>
-        <button onclick="addToCart('Almond Butter Croissant', 4.50)" class="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-amber/10 text-amber font-semibold hover:bg-amber hover:text-espresso transition-all shadow-lg shrink-0 active:scale-95">
-          Add to Order
-        </button>
-      </div>
-
-      <!-- Item 10 -->
-      <div class="menu-item glass p-6 rounded-3xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 hover:border-amber/40 transition-all duration-300 group hover:-translate-y-1" data-category="bakery" data-name="cardamom morning bun">
-        <div class="space-y-2 flex-1">
-          <div class="flex items-center gap-3">
-            <h3 class="font-serif text-2xl font-bold group-hover:text-amber transition-colors">Cardamom Morning Bun</h3>
-          </div>
-          <p class="text-warmgray text-sm leading-relaxed">Laminated brioche dough rolled with aromatic crushed cardamom, organic cane sugar, and orange zest.</p>
-          <div class="text-amber font-serif font-bold text-xl">$4.25</div>
-        </div>
-        <button onclick="addToCart('Cardamom Morning Bun', 4.25)" class="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-amber/10 text-amber font-semibold hover:bg-amber hover:text-espresso transition-all shadow-lg shrink-0 active:scale-95">
-          Add to Order
-        </button>
-      </div>
-
+      <!-- Dynamically rendered via js/menu-data.js -->
     </div>
   </section>
 
@@ -333,19 +252,21 @@
       </div>
       <div>© 2026 Star Coffee Roasters. All rights reserved.</div>
       <div class="flex items-center gap-6">
-        <a href="index.html" class="hover:text-cream transition-colors">Home</a>
-        <a href="menu.html" class="hover:text-cream transition-colors">Menu</a>
-        <a href="contact.html" class="hover:text-cream transition-colors">Contact</a>
+        <a href="index.html" class="hover:text-cream transition-colors duration-200">Home</a>
+        <a href="menu.html" class="hover:text-cream transition-colors duration-200">Menu</a>
+        <a href="contact.html" class="hover:text-cream transition-colors duration-200">Contact</a>
       </div>
     </div>
   </footer>
 
+  <!-- Include Centralized Menu Data Store -->
+  <script src="js/menu-data.js"></script>
   <script>
     // Hide Preloader on window load
     window.addEventListener('load', () => {
       const preloader = document.getElementById('preloader');
       preloader.style.opacity = '0';
-      setTimeout(() => preloader.style.display = 'none', 600);
+      setTimeout(() => preloader.style.display = 'none', 500);
     });
 
     // Mobile menu toggle
@@ -423,9 +344,9 @@
             <div class="text-amber text-sm font-semibold">$${(item.price * item.quantity).toFixed(2)}</div>
           </div>
           <div class="flex items-center gap-3">
-            <button onclick="adjustQuantity(${index}, -1)" class="w-8 h-8 rounded-lg glass flex items-center justify-center text-cream hover:bg-amber hover:text-espresso transition-colors">-</button>
+            <button onclick="adjustQuantity(${index}, -1)" class="w-8 h-8 rounded-lg glass flex items-center justify-center text-cream hover:bg-amber hover:text-espresso transition-colors duration-200 active:scale-95">-</button>
             <span class="font-bold text-cream">${item.quantity}</span>
-            <button onclick="adjustQuantity(${index}, 1)" class="w-8 h-8 rounded-lg glass flex items-center justify-center text-cream hover:bg-amber hover:text-espresso transition-colors">+</button>
+            <button onclick="adjustQuantity(${index}, 1)" class="w-8 h-8 rounded-lg glass flex items-center justify-center text-cream hover:bg-amber hover:text-espresso transition-colors duration-200 active:scale-95">+</button>
           </div>
         </div>
       `).join('');
@@ -453,8 +374,99 @@
 
     updateCart();
 
-    // Filtering & Search
+    // Admin Modal Functionality
+    const adminModalBtn = document.getElementById('admin-modal-btn');
+    const adminModal = document.getElementById('admin-modal');
+    const adminModalCard = document.getElementById('admin-modal-card');
+    const adminCloseBtn = document.getElementById('admin-close-btn');
+    const addCoffeeForm = document.getElementById('add-coffee-form');
+    const resetDefaultBtn = document.getElementById('reset-default-btn');
+
+    function openAdminModal() {
+      adminModal.classList.remove('opacity-0', 'pointer-events-none');
+      adminModalCard.classList.remove('scale-95');
+      adminModalCard.classList.add('scale-100');
+    }
+
+    function closeAdminModal() {
+      adminModal.classList.add('opacity-0', 'pointer-events-none');
+      adminModalCard.classList.remove('scale-100');
+      adminModalCard.classList.add('scale-95');
+    }
+
+    adminModalBtn.addEventListener('click', openAdminModal);
+    adminCloseBtn.addEventListener('click', closeAdminModal);
+    adminModal.addEventListener('click', (e) => {
+      if (e.target === adminModal) closeAdminModal();
+    });
+
+    addCoffeeForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const name = document.getElementById('coffee-name').value;
+      const category = document.getElementById('coffee-category').value;
+      const price = parseFloat(document.getElementById('coffee-price').value);
+      const badge = document.getElementById('coffee-badge').value.trim() || null;
+      const description = document.getElementById('coffee-desc').value;
+      const image = document.getElementById('coffee-image').value.trim() || 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?q=80&w=800&auto=format&fit=crop';
+
+      addMenuItem({ name, category, price, badge, description, image });
+      addCoffeeForm.reset();
+      closeAdminModal();
+      renderMenuGrid();
+      showToast(`Successfully added ${name} to the menu!`);
+    });
+
+    resetDefaultBtn.addEventListener('click', () => {
+      if (confirm('Reset menu items to default list?')) {
+        resetMenuToDefault();
+        renderMenuGrid();
+        closeAdminModal();
+        showToast('Menu reset to defaults.');
+      }
+    });
+
+    // Dynamic Menu Rendering & Filtering
     let currentCategory = 'all';
+
+    function renderMenuGrid() {
+      const menuGrid = document.getElementById('menu-grid');
+      const items = getMenuItems();
+      const query = document.getElementById('menu-search').value.toLowerCase();
+
+      const filtered = items.filter(item => {
+        const matchesCat = currentCategory === 'all' || item.category === currentCategory;
+        const matchesSearch = item.name.toLowerCase().includes(query) || item.description.toLowerCase().includes(query);
+        return matchesCat && matchesSearch;
+      });
+
+      if (filtered.length === 0) {
+        menuGrid.innerHTML = `<div class="col-span-2 text-center py-16 text-warmgray">No coffee or pastry items found matching your criteria.</div>`;
+        return;
+      }
+
+      menuGrid.innerHTML = filtered.map(item => `
+        <div class="menu-item glass p-6 rounded-3xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 hover:border-amber/40 transition-all duration-300 group hover:-translate-y-1 overflow-hidden" data-category="${item.category}" data-name="${item.name.toLowerCase()}">
+          <div class="space-y-2 flex-1">
+            <div class="flex items-center gap-3">
+              <h3 class="font-serif text-2xl font-bold group-hover:text-amber transition-colors">${item.name}</h3>
+              ${item.badge ? `<span class="px-2.5 py-0.5 rounded-full bg-amber/10 text-amber text-xs font-bold">${item.badge}</span>` : ''}
+            </div>
+            <p class="text-warmgray text-sm leading-relaxed">${item.description}</p>
+            <div class="text-amber font-serif font-bold text-xl">$${item.price.toFixed(2)}</div>
+          </div>
+          <button onclick="addToCart('${item.name.replace(/'/g, "\\'")}', ${item.price})" class="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-amber/10 text-amber font-semibold hover:bg-amber hover:text-espresso transition-all duration-300 shadow-lg shrink-0 active:scale-95">
+            Add to Order
+          </button>
+        </div>
+      `).join('');
+
+      // Animate rendered items with GSAP
+      const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (!prefersReduced) {
+        gsap.fromTo('.menu-item', { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.4, stagger: 0.05, ease: 'power3.out' });
+      }
+    }
+
     function filterCategory(cat) {
       currentCategory = cat;
       document.querySelectorAll('.cat-btn').forEach(btn => {
@@ -464,61 +476,36 @@
       event.target.classList.remove('glass', 'text-warmgray', 'font-medium');
       event.target.classList.add('bg-amber', 'text-espresso', 'font-semibold', 'shadow-md');
 
-      applyFilters();
+      renderMenuGrid();
     }
 
     const searchInput = document.getElementById('menu-search');
-    searchInput.addEventListener('input', applyFilters);
+    searchInput.addEventListener('input', renderMenuGrid);
 
-    function applyFilters() {
-      const query = searchInput.value.toLowerCase();
-      const items = document.querySelectorAll('.menu-item');
-
-      items.forEach(item => {
-        const cat = item.getAttribute('data-category');
-        const name = item.getAttribute('data-name');
-        const matchesCategory = currentCategory === 'all' || cat === currentCategory;
-        const matchesSearch = name.includes(query) || item.textContent.toLowerCase().includes(query);
-
-        if (matchesCategory && matchesSearch) {
-          item.style.display = 'flex';
-          gsap.fromTo(item, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.4, ease: 'power3.out' });
-        } else {
-          item.style.display = 'none';
-        }
-      });
-    }
+    // Initial render
+    renderMenuGrid();
 
     // GSAP ScrollTrigger Animations
-    gsap.registerPlugin(ScrollTrigger);
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!prefersReduced) {
+      gsap.registerPlugin(ScrollTrigger);
 
-    gsap.from('.menu-header-section > *', {
-      opacity: 0,
-      y: 40,
-      duration: 1,
-      stagger: 0.2,
-      ease: 'power3.out'
-    });
+      gsap.from('.menu-header-section > *', {
+        opacity: 0,
+        y: 30,
+        duration: 0.6,
+        stagger: 0.15,
+        ease: 'power3.out'
+      });
 
-    gsap.from('.filter-bar', {
-      opacity: 0,
-      y: 30,
-      duration: 1,
-      delay: 0.3,
-      ease: 'power3.out'
-    });
-
-    gsap.from('.menu-item', {
-      scrollTrigger: {
-        trigger: '#menu-grid',
-        start: 'top 85%'
-      },
-      opacity: 0,
-      y: 40,
-      duration: 0.8,
-      stagger: 0.1,
-      ease: 'power3.out'
-    });
+      gsap.from('.filter-bar', {
+        opacity: 0,
+        y: 20,
+        duration: 0.6,
+        delay: 0.2,
+        ease: 'power3.out'
+      });
+    }
   </script>
 </body>
 </html>
