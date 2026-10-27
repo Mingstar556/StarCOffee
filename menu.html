@@ -33,19 +33,52 @@
   <style>
     body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #1b1412; color: #fcf8f2; overflow-x: hidden; }
     .glass { background: rgba(44, 34, 30, 0.75); backdrop-filter: blur(16px); border: 1px solid rgba(200, 138, 88, 0.2); }
-    ::-webkit-scrollbar { width: 8px; }
-    ::-webkit-scrollbar-track { background: #1b1412; }
-    ::-webkit-scrollbar-thumb { background: #2c221e; border-radius: 4px; border: 2px solid #1b1412; }
-    ::-webkit-scrollbar-thumb:hover { background: #c88a58; }
+
+    /* Preloader */
+    #preloader {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: #1b1412;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.6s ease, visibility 0.6s ease;
+    }
+    .spinner-star {
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(135deg, #c88a58, #e0b084);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      color: #1b1412;
+      animation: spinPulse 2s infinite ease-in-out;
+      box-shadow: 0 0 30px rgba(200, 138, 88, 0.4);
+    }
+    @keyframes spinPulse {
+      0% { transform: scale(0.9) rotate(0deg); }
+      50% { transform: scale(1.1) rotate(180deg); }
+      100% { transform: scale(0.9) rotate(360deg); }
+    }
   </style>
 </head>
 <body class="bg-espresso text-cream antialiased selection:bg-amber selection:text-espresso">
+
+  <!-- Preloader Screen -->
+  <div id="preloader">
+    <div class="spinner-star font-serif font-bold">★</div>
+    <div class="mt-6 font-serif text-xl tracking-widest text-amber animate-pulse">STAR COFFEE</div>
+  </div>
 
   <!-- Navigation -->
   <header class="fixed top-0 left-0 right-0 z-50 px-6 py-4 transition-all duration-300" id="navbar">
     <nav class="max-w-7xl mx-auto glass rounded-2xl px-6 py-4 flex items-center justify-between shadow-2xl">
       <a href="index.html" class="flex items-center gap-3 group">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber to-gold flex items-center justify-center text-espresso font-serif font-bold text-xl shadow-lg shadow-amber/20 group-hover:scale-105 transition-transform">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber to-gold flex items-center justify-center text-espresso font-serif font-bold text-xl shadow-lg shadow-amber/20 group-hover:scale-110 transition-transform">
           ★
         </div>
         <span class="font-serif text-2xl font-bold tracking-tight text-cream">Star Coffee</span>
@@ -56,7 +89,7 @@
         <a href="contact.html" class="hover:text-cream transition-colors">Location & Contact</a>
       </div>
       <div class="flex items-center gap-4">
-        <button id="cart-toggle-btn" class="relative p-2.5 rounded-xl glass hover:border-amber/50 transition-colors flex items-center justify-center text-cream">
+        <button id="cart-toggle-btn" class="relative p-2.5 rounded-xl glass hover:border-amber/50 transition-colors flex items-center justify-center text-cream hover:scale-105">
           <svg class="w-5 h-5 text-amber" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
           <span id="cart-badge" class="absolute -top-1.5 -right-1.5 w-5 h-5 bg-amber text-espresso text-xs font-bold rounded-full flex items-center justify-center shadow-md scale-0 transition-transform duration-300">0</span>
         </button>
@@ -100,7 +133,7 @@
         <span>Total</span>
         <span id="cart-total" class="text-amber">$0.00</span>
       </div>
-      <button id="checkout-btn" class="w-full py-4 rounded-xl bg-amber text-espresso font-semibold hover:bg-gold transition-all shadow-lg shadow-amber/20">
+      <button id="checkout-btn" class="w-full py-4 rounded-xl bg-amber text-espresso font-semibold hover:bg-gold transition-all shadow-lg shadow-amber/20 hover:scale-[1.02]">
         Proceed to Checkout
       </button>
     </div>
@@ -108,19 +141,19 @@
 
   <!-- Toast Notification -->
   <div id="toast" class="fixed bottom-6 right-6 z-50 glass px-6 py-3 rounded-2xl shadow-2xl border border-amber/40 text-sm font-medium flex items-center gap-3 translate-y-20 opacity-0 transition-all duration-300">
-    <span class="text-amber text-lg">✨</span>
+    <span class="text-amber text-lg animate-spin">✨</span>
     <span id="toast-message">Item added to cart!</span>
   </div>
 
   <!-- Menu Header -->
-  <section class="pt-36 pb-12 px-6 text-center max-w-4xl mx-auto space-y-4">
-    <span class="text-amber text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full glass inline-block">Artisanal Offerings</span>
+  <section class="pt-36 pb-12 px-6 text-center max-w-4xl mx-auto space-y-4 menu-header-section">
+    <span class="text-amber text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full glass inline-block animate-pulse">Artisanal Offerings</span>
     <h1 class="font-serif text-5xl sm:text-6xl font-bold tracking-tight">Our Crafted Menu</h1>
     <p class="text-warmgray text-lg max-w-xl mx-auto font-light">From single-origin pour-overs to velvety lattes, ceremonial matchas, and freshly baked morning pastries.</p>
   </section>
 
   <!-- Search & Category Filters -->
-  <div class="max-w-7xl mx-auto px-6 mb-12">
+  <div class="max-w-7xl mx-auto px-6 mb-12 filter-bar">
     <div class="flex flex-col md:flex-row items-center justify-between gap-6 glass p-4 rounded-2xl">
       <!-- Search Input -->
       <div class="w-full md:w-80 relative">
@@ -143,7 +176,7 @@
     <div id="menu-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8">
 
       <!-- Item 1 -->
-      <div class="menu-item glass p-6 rounded-3xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 hover:border-amber/40 transition-all duration-300 group" data-category="espresso" data-name="signature star latte">
+      <div class="menu-item glass p-6 rounded-3xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 hover:border-amber/40 transition-all duration-300 group hover:-translate-y-1" data-category="espresso" data-name="signature star latte">
         <div class="space-y-2 flex-1">
           <div class="flex items-center gap-3">
             <h3 class="font-serif text-2xl font-bold group-hover:text-amber transition-colors">Signature Star Latte</h3>
@@ -152,13 +185,13 @@
           <p class="text-warmgray text-sm leading-relaxed">Double shot of espresso, velvety microfoam, organic wildflower honey, and a dusting of cinnamon.</p>
           <div class="text-amber font-serif font-bold text-xl">$6.50</div>
         </div>
-        <button onclick="addToCart('Signature Star Latte', 6.50)" class="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-amber/10 text-amber font-semibold hover:bg-amber hover:text-espresso transition-all shadow-lg shrink-0">
+        <button onclick="addToCart('Signature Star Latte', 6.50)" class="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-amber/10 text-amber font-semibold hover:bg-amber hover:text-espresso transition-all shadow-lg shrink-0 active:scale-95">
           Add to Order
         </button>
       </div>
 
       <!-- Item 2 -->
-      <div class="menu-item glass p-6 rounded-3xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 hover:border-amber/40 transition-all duration-300 group" data-category="espresso" data-name="ethiopian pour over">
+      <div class="menu-item glass p-6 rounded-3xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 hover:border-amber/40 transition-all duration-300 group hover:-translate-y-1" data-category="espresso" data-name="ethiopian pour over">
         <div class="space-y-2 flex-1">
           <div class="flex items-center gap-3">
             <h3 class="font-serif text-2xl font-bold group-hover:text-amber transition-colors">Ethiopian Pour Over</h3>
@@ -167,13 +200,13 @@
           <p class="text-warmgray text-sm leading-relaxed">Single origin Yirgacheffe brewed meticulously. Bright notes of bergamot, jasmine, and stone fruit.</p>
           <div class="text-amber font-serif font-bold text-xl">$5.75</div>
         </div>
-        <button onclick="addToCart('Ethiopian Pour Over', 5.75)" class="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-amber/10 text-amber font-semibold hover:bg-amber hover:text-espresso transition-all shadow-lg shrink-0">
+        <button onclick="addToCart('Ethiopian Pour Over', 5.75)" class="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-amber/10 text-amber font-semibold hover:bg-amber hover:text-espresso transition-all shadow-lg shrink-0 active:scale-95">
           Add to Order
         </button>
       </div>
 
       <!-- Item 3 -->
-      <div class="menu-item glass p-6 rounded-3xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 hover:border-amber/40 transition-all duration-300 group" data-category="cold" data-name="velvet cold brew">
+      <div class="menu-item glass p-6 rounded-3xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 hover:border-amber/40 transition-all duration-300 group hover:-translate-y-1" data-category="cold" data-name="velvet cold brew">
         <div class="space-y-2 flex-1">
           <div class="flex items-center gap-3">
             <h3 class="font-serif text-2xl font-bold group-hover:text-amber transition-colors">Velvet Cold Brew</h3>
@@ -182,13 +215,13 @@
           <p class="text-warmgray text-sm leading-relaxed">Steeped for 18 hours in cold spring water. Smooth, low acidity with deep dark chocolate undertones.</p>
           <div class="text-amber font-serif font-bold text-xl">$5.25</div>
         </div>
-        <button onclick="addToCart('Velvet Cold Brew', 5.25)" class="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-amber/10 text-amber font-semibold hover:bg-amber hover:text-espresso transition-all shadow-lg shrink-0">
+        <button onclick="addToCart('Velvet Cold Brew', 5.25)" class="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-amber/10 text-amber font-semibold hover:bg-amber hover:text-espresso transition-all shadow-lg shrink-0 active:scale-95">
           Add to Order
         </button>
       </div>
 
       <!-- Item 4 -->
-      <div class="menu-item glass p-6 rounded-3xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 hover:border-amber/40 transition-all duration-300 group" data-category="espresso" data-name="traditional cortado">
+      <div class="menu-item glass p-6 rounded-3xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 hover:border-amber/40 transition-all duration-300 group hover:-translate-y-1" data-category="espresso" data-name="traditional cortado">
         <div class="space-y-2 flex-1">
           <div class="flex items-center gap-3">
             <h3 class="font-serif text-2xl font-bold group-hover:text-amber transition-colors">Traditional Cortado</h3>
@@ -196,13 +229,13 @@
           <p class="text-warmgray text-sm leading-relaxed">Equal parts robust espresso and steamed textured milk, served in a classic glass.</p>
           <div class="text-amber font-serif font-bold text-xl">$4.75</div>
         </div>
-        <button onclick="addToCart('Traditional Cortado', 4.75)" class="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-amber/10 text-amber font-semibold hover:bg-amber hover:text-espresso transition-all shadow-lg shrink-0">
+        <button onclick="addToCart('Traditional Cortado', 4.75)" class="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-amber/10 text-amber font-semibold hover:bg-amber hover:text-espresso transition-all shadow-lg shrink-0 active:scale-95">
           Add to Order
         </button>
       </div>
 
       <!-- Item 5 -->
-      <div class="menu-item glass p-6 rounded-3xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 hover:border-amber/40 transition-all duration-300 group" data-category="specialty" data-name="ceremonial matcha latte">
+      <div class="menu-item glass p-6 rounded-3xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 hover:border-amber/40 transition-all duration-300 group hover:-translate-y-1" data-category="specialty" data-name="ceremonial matcha latte">
         <div class="space-y-2 flex-1">
           <div class="flex items-center gap-3">
             <h3 class="font-serif text-2xl font-bold group-hover:text-amber transition-colors">Ceremonial Matcha Latte</h3>
@@ -211,13 +244,13 @@
           <p class="text-warmgray text-sm leading-relaxed">Uji ceremonial grade green tea whisked smooth with steamed oat milk and vanilla bean syrup.</p>
           <div class="text-amber font-serif font-bold text-xl">$6.75</div>
         </div>
-        <button onclick="addToCart('Ceremonial Matcha Latte', 6.75)" class="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-amber/10 text-amber font-semibold hover:bg-amber hover:text-espresso transition-all shadow-lg shrink-0">
+        <button onclick="addToCart('Ceremonial Matcha Latte', 6.75)" class="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-amber/10 text-amber font-semibold hover:bg-amber hover:text-espresso transition-all shadow-lg shrink-0 active:scale-95">
           Add to Order
         </button>
       </div>
 
       <!-- Item 6 -->
-      <div class="menu-item glass p-6 rounded-3xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 hover:border-amber/40 transition-all duration-300 group" data-category="specialty" data-name="golden turmeric chai">
+      <div class="menu-item glass p-6 rounded-3xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 hover:border-amber/40 transition-all duration-300 group hover:-translate-y-1" data-category="specialty" data-name="golden turmeric chai">
         <div class="space-y-2 flex-1">
           <div class="flex items-center gap-3">
             <h3 class="font-serif text-2xl font-bold group-hover:text-amber transition-colors">Golden Turmeric Chai</h3>
@@ -225,13 +258,13 @@
           <p class="text-warmgray text-sm leading-relaxed">Spiced black tea infused with fresh turmeric root, ginger, cardamom, and steamed almond milk.</p>
           <div class="text-amber font-serif font-bold text-xl">$6.00</div>
         </div>
-        <button onclick="addToCart('Golden Turmeric Chai', 6.00)" class="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-amber/10 text-amber font-semibold hover:bg-amber hover:text-espresso transition-all shadow-lg shrink-0">
+        <button onclick="addToCart('Golden Turmeric Chai', 6.00)" class="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-amber/10 text-amber font-semibold hover:bg-amber hover:text-espresso transition-all shadow-lg shrink-0 active:scale-95">
           Add to Order
         </button>
       </div>
 
       <!-- Item 7 -->
-      <div class="menu-item glass p-6 rounded-3xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 hover:border-amber/40 transition-all duration-300 group" data-category="cold" data-name="nitro cold brew float">
+      <div class="menu-item glass p-6 rounded-3xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 hover:border-amber/40 transition-all duration-300 group hover:-translate-y-1" data-category="cold" data-name="nitro cold brew float">
         <div class="space-y-2 flex-1">
           <div class="flex items-center gap-3">
             <h3 class="font-serif text-2xl font-bold group-hover:text-amber transition-colors">Nitro Cold Brew Float</h3>
@@ -240,13 +273,13 @@
           <p class="text-warmgray text-sm leading-relaxed">Draft nitro cold brew topped with a scoop of organic Madagascar vanilla bean gelato.</p>
           <div class="text-amber font-serif font-bold text-xl">$7.25</div>
         </div>
-        <button onclick="addToCart('Nitro Cold Brew Float', 7.25)" class="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-amber/10 text-amber font-semibold hover:bg-amber hover:text-espresso transition-all shadow-lg shrink-0">
+        <button onclick="addToCart('Nitro Cold Brew Float', 7.25)" class="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-amber/10 text-amber font-semibold hover:bg-amber hover:text-espresso transition-all shadow-lg shrink-0 active:scale-95">
           Add to Order
         </button>
       </div>
 
       <!-- Item 8 -->
-      <div class="menu-item glass p-6 rounded-3xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 hover:border-amber/40 transition-all duration-300 group" data-category="cold" data-name="iced spanish latte">
+      <div class="menu-item glass p-6 rounded-3xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 hover:border-amber/40 transition-all duration-300 group hover:-translate-y-1" data-category="cold" data-name="iced spanish latte">
         <div class="space-y-2 flex-1">
           <div class="flex items-center gap-3">
             <h3 class="font-serif text-2xl font-bold group-hover:text-amber transition-colors">Iced Spanish Latte</h3>
@@ -254,13 +287,13 @@
           <p class="text-warmgray text-sm leading-relaxed">Espresso poured over ice with a layer of sweetened condensed milk and whole milk.</p>
           <div class="text-amber font-serif font-bold text-xl">$6.25</div>
         </div>
-        <button onclick="addToCart('Iced Spanish Latte', 6.25)" class="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-amber/10 text-amber font-semibold hover:bg-amber hover:text-espresso transition-all shadow-lg shrink-0">
+        <button onclick="addToCart('Iced Spanish Latte', 6.25)" class="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-amber/10 text-amber font-semibold hover:bg-amber hover:text-espresso transition-all shadow-lg shrink-0 active:scale-95">
           Add to Order
         </button>
       </div>
 
       <!-- Item 9 -->
-      <div class="menu-item glass p-6 rounded-3xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 hover:border-amber/40 transition-all duration-300 group" data-category="bakery" data-name="almond butter croissant">
+      <div class="menu-item glass p-6 rounded-3xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 hover:border-amber/40 transition-all duration-300 group hover:-translate-y-1" data-category="bakery" data-name="almond butter croissant">
         <div class="space-y-2 flex-1">
           <div class="flex items-center gap-3">
             <h3 class="font-serif text-2xl font-bold group-hover:text-amber transition-colors">Almond Butter Croissant</h3>
@@ -269,13 +302,13 @@
           <p class="text-warmgray text-sm leading-relaxed">Flaky, all-butter French croissant filled with rich almond frangipane and toasted sliced almonds.</p>
           <div class="text-amber font-serif font-bold text-xl">$4.50</div>
         </div>
-        <button onclick="addToCart('Almond Butter Croissant', 4.50)" class="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-amber/10 text-amber font-semibold hover:bg-amber hover:text-espresso transition-all shadow-lg shrink-0">
+        <button onclick="addToCart('Almond Butter Croissant', 4.50)" class="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-amber/10 text-amber font-semibold hover:bg-amber hover:text-espresso transition-all shadow-lg shrink-0 active:scale-95">
           Add to Order
         </button>
       </div>
 
       <!-- Item 10 -->
-      <div class="menu-item glass p-6 rounded-3xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 hover:border-amber/40 transition-all duration-300 group" data-category="bakery" data-name="cardamom morning bun">
+      <div class="menu-item glass p-6 rounded-3xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 hover:border-amber/40 transition-all duration-300 group hover:-translate-y-1" data-category="bakery" data-name="cardamom morning bun">
         <div class="space-y-2 flex-1">
           <div class="flex items-center gap-3">
             <h3 class="font-serif text-2xl font-bold group-hover:text-amber transition-colors">Cardamom Morning Bun</h3>
@@ -283,7 +316,7 @@
           <p class="text-warmgray text-sm leading-relaxed">Laminated brioche dough rolled with aromatic crushed cardamom, organic cane sugar, and orange zest.</p>
           <div class="text-amber font-serif font-bold text-xl">$4.25</div>
         </div>
-        <button onclick="addToCart('Cardamom Morning Bun', 4.25)" class="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-amber/10 text-amber font-semibold hover:bg-amber hover:text-espresso transition-all shadow-lg shrink-0">
+        <button onclick="addToCart('Cardamom Morning Bun', 4.25)" class="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-amber/10 text-amber font-semibold hover:bg-amber hover:text-espresso transition-all shadow-lg shrink-0 active:scale-95">
           Add to Order
         </button>
       </div>
@@ -308,6 +341,13 @@
   </footer>
 
   <script>
+    // Hide Preloader on window load
+    window.addEventListener('load', () => {
+      const preloader = document.getElementById('preloader');
+      preloader.style.opacity = '0';
+      setTimeout(() => preloader.style.display = 'none', 600);
+    });
+
     // Mobile menu toggle
     const menuBtn = document.getElementById('menu-btn');
     const mobileMenu = document.getElementById('mobile-menu');
@@ -355,6 +395,7 @@
       }
       updateCart();
       showToast(`Added ${name} to your order!`);
+      gsap.fromTo(cartBadge, { scale: 1.4 }, { scale: 1, duration: 0.3, ease: 'back.out' });
     }
 
     function updateCart() {
@@ -441,17 +482,39 @@
 
         if (matchesCategory && matchesSearch) {
           item.style.display = 'flex';
-          gsap.fromTo(item, { opacity: 0, y: 15 }, { opacity: 1, y: 0, duration: 0.4 });
+          gsap.fromTo(item, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.4, ease: 'power3.out' });
         } else {
           item.style.display = 'none';
         }
       });
     }
 
-    // GSAP Header entrance
-    gsap.from('section > *', {
+    // GSAP ScrollTrigger Animations
+    gsap.registerPlugin(ScrollTrigger);
+
+    gsap.from('.menu-header-section > *', {
       opacity: 0,
-      y: 20,
+      y: 40,
+      duration: 1,
+      stagger: 0.2,
+      ease: 'power3.out'
+    });
+
+    gsap.from('.filter-bar', {
+      opacity: 0,
+      y: 30,
+      duration: 1,
+      delay: 0.3,
+      ease: 'power3.out'
+    });
+
+    gsap.from('.menu-item', {
+      scrollTrigger: {
+        trigger: '#menu-grid',
+        start: 'top 85%'
+      },
+      opacity: 0,
+      y: 40,
       duration: 0.8,
       stagger: 0.1,
       ease: 'power3.out'

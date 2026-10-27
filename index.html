@@ -33,20 +33,67 @@
   <style>
     body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #1b1412; color: #fcf8f2; overflow-x: hidden; }
     .glass { background: rgba(44, 34, 30, 0.75); backdrop-filter: blur(16px); border: 1px solid rgba(200, 138, 88, 0.2); }
-    .hero-glow { background: radial-gradient(circle at 50% 25%, rgba(200, 138, 88, 0.22) 0%, rgba(27, 20, 18, 0) 70%); }
-    ::-webkit-scrollbar { width: 8px; }
-    ::-webkit-scrollbar-track { background: #1b1412; }
-    ::-webkit-scrollbar-thumb { background: #2c221e; border-radius: 4px; border: 2px solid #1b1412; }
-    ::-webkit-scrollbar-thumb:hover { background: #c88a58; }
+    .hero-glow { background: radial-gradient(circle at 50% 25%, rgba(200, 138, 88, 0.28) 0%, rgba(27, 20, 18, 0) 70%); }
+
+    /* Preloader */
+    #preloader {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: #1b1412;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.6s ease, visibility 0.6s ease;
+    }
+    .spinner-star {
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(135deg, #c88a58, #e0b084);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      color: #1b1412;
+      animation: spinPulse 2s infinite ease-in-out;
+      box-shadow: 0 0 30px rgba(200, 138, 88, 0.4);
+    }
+    @keyframes spinPulse {
+      0% { transform: scale(0.9) rotate(0deg); }
+      50% { transform: scale(1.1) rotate(180deg); }
+      100% { transform: scale(0.9) rotate(360deg); }
+    }
+
+    /* Floating Steam Keyframes */
+    @keyframes steam {
+      0% { transform: translateY(0) scaleX(1); opacity: 0; }
+      50% { opacity: 0.6; }
+      100% { transform: translateY(-60px) scaleX(1.5); opacity: 0; }
+    }
+    .steam-particle {
+      position: absolute;
+      background: rgba(252, 248, 242, 0.2);
+      filter: blur(8px);
+      border-radius: 50%;
+      animation: steam 4s infinite ease-in-out;
+    }
   </style>
 </head>
 <body class="bg-espresso text-cream antialiased selection:bg-amber selection:text-espresso">
+
+  <!-- Preloader Screen -->
+  <div id="preloader">
+    <div class="spinner-star font-serif font-bold">★</div>
+    <div class="mt-6 font-serif text-xl tracking-widest text-amber animate-pulse">STAR COFFEE</div>
+  </div>
 
   <!-- Navigation -->
   <header class="fixed top-0 left-0 right-0 z-50 px-6 py-4 transition-all duration-300" id="navbar">
     <nav class="max-w-7xl mx-auto glass rounded-2xl px-6 py-4 flex items-center justify-between shadow-2xl">
       <a href="index.html" class="flex items-center gap-3 group">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber to-gold flex items-center justify-center text-espresso font-serif font-bold text-xl shadow-lg shadow-amber/20 group-hover:scale-105 transition-transform">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber to-gold flex items-center justify-center text-espresso font-serif font-bold text-xl shadow-lg shadow-amber/20 group-hover:scale-110 transition-transform">
           ★
         </div>
         <span class="font-serif text-2xl font-bold tracking-tight text-cream">Star Coffee</span>
@@ -57,7 +104,7 @@
         <a href="contact.html" class="hover:text-cream transition-colors">Location & Contact</a>
       </div>
       <div class="flex items-center gap-4">
-        <button id="cart-toggle-btn" class="relative p-2.5 rounded-xl glass hover:border-amber/50 transition-colors flex items-center justify-center text-cream">
+        <button id="cart-toggle-btn" class="relative p-2.5 rounded-xl glass hover:border-amber/50 transition-colors flex items-center justify-center text-cream hover:scale-105">
           <svg class="w-5 h-5 text-amber" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
           <span id="cart-badge" class="absolute -top-1.5 -right-1.5 w-5 h-5 bg-amber text-espresso text-xs font-bold rounded-full flex items-center justify-center shadow-md scale-0 transition-transform duration-300">0</span>
         </button>
@@ -101,7 +148,7 @@
         <span>Total</span>
         <span id="cart-total" class="text-amber">$0.00</span>
       </div>
-      <button id="checkout-btn" class="w-full py-4 rounded-xl bg-amber text-espresso font-semibold hover:bg-gold transition-all shadow-lg shadow-amber/20">
+      <button id="checkout-btn" class="w-full py-4 rounded-xl bg-amber text-espresso font-semibold hover:bg-gold transition-all shadow-lg shadow-amber/20 hover:scale-[1.02]">
         Proceed to Checkout
       </button>
     </div>
@@ -109,16 +156,23 @@
 
   <!-- Toast Notification -->
   <div id="toast" class="fixed bottom-6 right-6 z-50 glass px-6 py-3 rounded-2xl shadow-2xl border border-amber/40 text-sm font-medium flex items-center gap-3 translate-y-20 opacity-0 transition-all duration-300">
-    <span class="text-amber text-lg">✨</span>
+    <span class="text-amber text-lg animate-spin">✨</span>
     <span id="toast-message">Item added to cart!</span>
   </div>
 
   <!-- Hero Section -->
   <section class="relative min-h-screen flex items-center justify-center pt-32 pb-20 px-6 hero-glow overflow-hidden">
-    <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+    <!-- Animated background steam particles -->
+    <div class="absolute inset-0 pointer-events-none overflow-hidden">
+      <div class="steam-particle w-20 h-20 top-1/3 left-1/4" style="animation-delay: 0s;"></div>
+      <div class="steam-particle w-16 h-16 top-1/2 left-1/3" style="animation-delay: 1.5s;"></div>
+      <div class="steam-particle w-24 h-24 top-2/5 right-1/4" style="animation-delay: 0.8s;"></div>
+    </div>
+
+    <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center relative z-10">
       <div class="lg:col-span-7 space-y-8 text-center lg:text-left hero-content">
-        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full glass text-amber text-xs font-semibold uppercase tracking-widest shadow-lg">
-          <span class="w-2 h-2 rounded-full bg-amber animate-pulse"></span> Artisanal Roast · Ethical Sourcing
+        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full glass text-amber text-xs font-semibold uppercase tracking-widest shadow-lg animate-pulse">
+          <span class="w-2 h-2 rounded-full bg-amber"></span> Artisanal Roast · Ethical Sourcing
         </div>
         <h1 class="font-serif text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.1]">
           Where Every Sip is a <span class="text-transparent bg-clip-text bg-gradient-to-r from-amber to-gold">Masterpiece.</span>
@@ -130,21 +184,21 @@
           <a href="menu.html" class="w-full sm:w-auto px-8 py-4 rounded-2xl bg-amber text-espresso font-semibold text-base hover:bg-gold transition-all shadow-xl shadow-amber/25 hover:scale-105 text-center">
             Explore Our Menu
           </a>
-          <a href="contact.html" class="w-full sm:w-auto px-8 py-4 rounded-2xl glass text-cream font-semibold text-base hover:bg-coffee/80 transition-all text-center hover:border-amber/40">
+          <a href="contact.html" class="w-full sm:w-auto px-8 py-4 rounded-2xl glass text-cream font-semibold text-base hover:bg-coffee/80 transition-all text-center hover:border-amber/40 hover:scale-105">
             Visit Our Cafe
           </a>
         </div>
         <!-- Stats -->
-        <div class="grid grid-cols-3 gap-6 pt-8 border-t border-coffee/60 max-w-lg mx-auto lg:mx-0">
-          <div>
+        <div class="grid grid-cols-3 gap-6 pt-8 border-t border-coffee/60 max-w-lg mx-auto lg:mx-0 stats-grid">
+          <div class="stat-item">
             <div class="font-serif text-3xl font-bold text-amber">100%</div>
             <div class="text-xs text-warmgray uppercase tracking-wider mt-1">Arabica Beans</div>
           </div>
-          <div>
+          <div class="stat-item">
             <div class="font-serif text-3xl font-bold text-amber">12+</div>
             <div class="text-xs text-warmgray uppercase tracking-wider mt-1">Single Origins</div>
           </div>
-          <div>
+          <div class="stat-item">
             <div class="font-serif text-3xl font-bold text-amber">4.9★</div>
             <div class="text-xs text-warmgray uppercase tracking-wider mt-1">Customer Rating</div>
           </div>
@@ -154,8 +208,8 @@
       <div class="lg:col-span-5 relative hero-image">
         <div class="relative mx-auto max-w-md lg:max-w-none">
           <div class="absolute -inset-4 bg-gradient-to-tr from-amber/30 to-gold/10 rounded-3xl blur-2xl -z-10 animate-pulse"></div>
-          <div class="rounded-3xl overflow-hidden glass p-3 shadow-2xl border border-amber/20">
-            <img src="https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?q=80&w=1000&auto=format&fit=crop" alt="Pour over coffee" class="w-full h-[460px] object-cover rounded-2xl shadow-inner hover:scale-105 transition-transform duration-700">
+          <div class="rounded-3xl overflow-hidden glass p-3 shadow-2xl border border-amber/20 group">
+            <img src="https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?q=80&w=1000&auto=format&fit=crop" alt="Pour over coffee" class="w-full h-[460px] object-cover rounded-2xl shadow-inner group-hover:scale-105 transition-transform duration-700">
           </div>
           <!-- Floating badge -->
           <div class="absolute -bottom-6 -left-6 glass px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-4 border border-amber/30 animate-bounce" style="animation-duration: 4s;">
@@ -171,26 +225,26 @@
   </section>
 
   <!-- Featured Highlights -->
-  <section class="py-24 px-6 border-t border-coffee/40 bg-gradient-to-b from-transparent to-coffee/20">
+  <section class="py-24 px-6 border-t border-coffee/40 bg-gradient-to-b from-transparent to-coffee/25 highlights-section">
     <div class="max-w-7xl mx-auto">
-      <div class="text-center max-w-2xl mx-auto mb-16 space-y-4">
+      <div class="text-center max-w-2xl mx-auto mb-16 space-y-4 section-header">
         <span class="text-amber text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full glass inline-block">The Star Coffee Experience</span>
         <h2 class="font-serif text-4xl sm:text-5xl font-bold">Crafted with Passion & Precision</h2>
         <p class="text-warmgray text-lg">Every detail of your cup is meticulously dialed in for maximum warmth, body, and aroma.</p>
       </div>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-        <div class="glass p-8 rounded-3xl space-y-4 hover:border-amber/50 transition-all duration-300 group hover:-translate-y-1">
-          <div class="w-14 h-14 rounded-2xl bg-amber/10 flex items-center justify-center text-amber text-2xl group-hover:scale-110 transition-transform shadow-inner">🌱</div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 cards-grid">
+        <div class="glass p-8 rounded-3xl space-y-4 hover:border-amber/50 transition-all duration-300 group hover:-translate-y-2">
+          <div class="w-14 h-14 rounded-2xl bg-amber/10 flex items-center justify-center text-amber text-2xl group-hover:scale-110 group-hover:rotate-6 transition-transform shadow-inner">🌱</div>
           <h3 class="font-serif text-2xl font-bold">Ethical Sourcing</h3>
           <p class="text-warmgray leading-relaxed text-sm">Direct trade relationships with high-altitude farmers ensuring fair wages, sustainable agriculture, and pristine bean quality.</p>
         </div>
-        <div class="glass p-8 rounded-3xl space-y-4 hover:border-amber/50 transition-all duration-300 group hover:-translate-y-1">
-          <div class="w-14 h-14 rounded-2xl bg-amber/10 flex items-center justify-center text-amber text-2xl group-hover:scale-110 transition-transform shadow-inner">🔥</div>
+        <div class="glass p-8 rounded-3xl space-y-4 hover:border-amber/50 transition-all duration-300 group hover:-translate-y-2">
+          <div class="w-14 h-14 rounded-2xl bg-amber/10 flex items-center justify-center text-amber text-2xl group-hover:scale-110 group-hover:rotate-6 transition-transform shadow-inner">🔥</div>
           <h3 class="font-serif text-2xl font-bold">Small-Batch Roast</h3>
           <p class="text-warmgray leading-relaxed text-sm">Roasted daily in small quantities using artisanal drum roasters to unlock subtle flavor notes of rich chocolate, caramel, and berry.</p>
         </div>
-        <div class="glass p-8 rounded-3xl space-y-4 hover:border-amber/50 transition-all duration-300 group hover:-translate-y-1">
-          <div class="w-14 h-14 rounded-2xl bg-amber/10 flex items-center justify-center text-amber text-2xl group-hover:scale-110 transition-transform shadow-inner">☕</div>
+        <div class="glass p-8 rounded-3xl space-y-4 hover:border-amber/50 transition-all duration-300 group hover:-translate-y-2">
+          <div class="w-14 h-14 rounded-2xl bg-amber/10 flex items-center justify-center text-amber text-2xl group-hover:scale-110 group-hover:rotate-6 transition-transform shadow-inner">☕</div>
           <h3 class="font-serif text-2xl font-bold">Expert Baristas</h3>
           <p class="text-warmgray leading-relaxed text-sm">Trained masters of extraction, milk chemistry, and latte art dedicated to elevating your daily morning ritual into an unforgettable experience.</p>
         </div>
@@ -199,7 +253,7 @@
   </section>
 
   <!-- Popular Drinks Preview Section -->
-  <section class="py-24 px-6 max-w-7xl mx-auto">
+  <section class="py-24 px-6 max-w-7xl mx-auto favorites-section">
     <div class="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
       <div class="space-y-4">
         <span class="text-amber text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full glass inline-block">Menu Highlights</span>
@@ -207,13 +261,13 @@
       </div>
       <a href="menu.html" class="inline-flex items-center gap-2 text-amber font-semibold hover:text-gold transition-colors group">
         <span>View Full Menu</span>
-        <span class="group-hover:translate-x-1 transition-transform">→</span>
+        <span class="group-hover:translate-x-2 transition-transform">→</span>
       </a>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 favorites-grid">
       <!-- Item 1 -->
-      <div class="glass rounded-3xl overflow-hidden group hover:border-amber/40 transition-all duration-300">
+      <div class="glass rounded-3xl overflow-hidden group hover:border-amber/40 transition-all duration-500 hover:-translate-y-2">
         <div class="h-64 overflow-hidden relative">
           <img src="https://images.unsplash.com/photo-1541167760496-1628856ab772?q=80&w=800&auto=format&fit=crop" alt="Latte" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
           <span class="absolute top-4 right-4 glass px-3 py-1 rounded-full text-xs font-bold text-amber">Best Seller</span>
@@ -224,14 +278,14 @@
             <span class="text-amber font-serif font-bold text-xl">$6.50</span>
           </div>
           <p class="text-warmgray text-sm">Double shot of espresso, velvety microfoam, organic wildflower honey, and cinnamon.</p>
-          <button onclick="addToCart('Signature Star Latte', 6.50)" class="w-full py-3 rounded-xl bg-amber/10 text-amber font-semibold hover:bg-amber hover:text-espresso transition-all">
+          <button onclick="addToCart('Signature Star Latte', 6.50)" class="w-full py-3 rounded-xl bg-amber/10 text-amber font-semibold hover:bg-amber hover:text-espresso transition-all shadow-md active:scale-95">
             Add to Order
           </button>
         </div>
       </div>
 
       <!-- Item 2 -->
-      <div class="glass rounded-3xl overflow-hidden group hover:border-amber/40 transition-all duration-300">
+      <div class="glass rounded-3xl overflow-hidden group hover:border-amber/40 transition-all duration-500 hover:-translate-y-2">
         <div class="h-64 overflow-hidden relative">
           <img src="https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?q=80&w=800&auto=format&fit=crop" alt="Pour Over" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
           <span class="absolute top-4 right-4 glass px-3 py-1 rounded-full text-xs font-bold text-amber">Single Origin</span>
@@ -242,14 +296,14 @@
             <span class="text-amber font-serif font-bold text-xl">$5.75</span>
           </div>
           <p class="text-warmgray text-sm">Single origin Yirgacheffe with bright notes of bergamot, jasmine, and stone fruit.</p>
-          <button onclick="addToCart('Ethiopian Pour Over', 5.75)" class="w-full py-3 rounded-xl bg-amber/10 text-amber font-semibold hover:bg-amber hover:text-espresso transition-all">
+          <button onclick="addToCart('Ethiopian Pour Over', 5.75)" class="w-full py-3 rounded-xl bg-amber/10 text-amber font-semibold hover:bg-amber hover:text-espresso transition-all shadow-md active:scale-95">
             Add to Order
           </button>
         </div>
       </div>
 
       <!-- Item 3 -->
-      <div class="glass rounded-3xl overflow-hidden group hover:border-amber/40 transition-all duration-300">
+      <div class="glass rounded-3xl overflow-hidden group hover:border-amber/40 transition-all duration-500 hover:-translate-y-2">
         <div class="h-64 overflow-hidden relative">
           <img src="https://images.unsplash.com/photo-1517701550927-30cf4ba1dba5?q=80&w=800&auto=format&fit=crop" alt="Cold Brew" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
           <span class="absolute top-4 right-4 glass px-3 py-1 rounded-full text-xs font-bold text-amber">Refreshing</span>
@@ -260,7 +314,7 @@
             <span class="text-amber font-serif font-bold text-xl">$5.25</span>
           </div>
           <p class="text-warmgray text-sm">Steeped for 18 hours in cold spring water. Smooth with deep dark chocolate undertones.</p>
-          <button onclick="addToCart('Velvet Cold Brew', 5.25)" class="w-full py-3 rounded-xl bg-amber/10 text-amber font-semibold hover:bg-amber hover:text-espresso transition-all">
+          <button onclick="addToCart('Velvet Cold Brew', 5.25)" class="w-full py-3 rounded-xl bg-amber/10 text-amber font-semibold hover:bg-amber hover:text-espresso transition-all shadow-md active:scale-95">
             Add to Order
           </button>
         </div>
@@ -285,6 +339,13 @@
   </footer>
 
   <script>
+    // Hide Preloader on window load
+    window.addEventListener('load', () => {
+      const preloader = document.getElementById('preloader');
+      preloader.style.opacity = '0';
+      setTimeout(() => preloader.style.display = 'none', 600);
+    });
+
     // Mobile menu toggle
     const menuBtn = document.getElementById('menu-btn');
     const mobileMenu = document.getElementById('mobile-menu');
@@ -332,6 +393,8 @@
       }
       updateCart();
       showToast(`Added ${name} to your order!`);
+      // Bounce cart badge animation
+      gsap.fromTo(cartBadge, { scale: 1.4 }, { scale: 1, duration: 0.3, ease: 'back.out' });
     }
 
     function updateCart() {
@@ -389,19 +452,57 @@
 
     updateCart();
 
-    // GSAP animations
+    // GSAP ScrollTrigger Animations
+    gsap.registerPlugin(ScrollTrigger);
+
     gsap.from('.hero-content > *', {
       opacity: 0,
-      y: 30,
+      y: 50,
+      duration: 1.2,
+      stagger: 0.2,
+      ease: 'power3.out'
+    });
+
+    gsap.from('.hero-image', {
+      opacity: 0,
+      scale: 0.9,
+      duration: 1.4,
+      delay: 0.3,
+      ease: 'power3.out'
+    });
+
+    gsap.from('.highlights-section .section-header', {
+      scrollTrigger: {
+        trigger: '.highlights-section',
+        start: 'top 80%'
+      },
+      opacity: 0,
+      y: 40,
+      duration: 1,
+      ease: 'power3.out'
+    });
+
+    gsap.from('.cards-grid > div', {
+      scrollTrigger: {
+        trigger: '.cards-grid',
+        start: 'top 80%'
+      },
+      opacity: 0,
+      y: 60,
       duration: 1,
       stagger: 0.2,
       ease: 'power3.out'
     });
-    gsap.from('.hero-image', {
+
+    gsap.from('.favorites-section > *', {
+      scrollTrigger: {
+        trigger: '.favorites-section',
+        start: 'top 85%'
+      },
       opacity: 0,
-      scale: 0.95,
-      duration: 1.2,
-      delay: 0.3,
+      y: 50,
+      duration: 1,
+      stagger: 0.2,
       ease: 'power3.out'
     });
   </script>
