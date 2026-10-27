@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Menu — Star Coffee</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://unpkg.com/@studio-freight/lenis@1.0.29/dist/lenis.min.js"></script>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            espresso: '#1b1412',
+            coffee: '#2c221e',
+            amber: '#c88a58',
+            gold: '#e0b084',
+            cream: '#fcf8f2',
+            warmgray: '#a39690'
+          },
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            serif: ['"Playfair Display"', 'serif']
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #1b1412; color: #fcf8f2; overflow-x: hidden; }
+    .glass { background: rgba(44, 34, 30, 0.75); backdrop-filter: blur(12px); border: 1px solid rgba(200, 138, 88, 0.2); }
+  </style>
+</head>
+<body class="bg-espresso text-cream antialiased selection:bg-amber selection:text-espresso">
+
+  <!-- Navigation -->
+  <header class="fixed top-0 left-0 right-0 z-50 px-6 py-4">
+    <nav class="max-w-7xl mx-auto glass rounded-2xl px-6 py-4 flex items-center justify-between">
+      <a href="index.html" class="flex items-center gap-3 group">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber to-gold flex items-center justify-center text-espresso font-serif font-bold text-xl shadow-lg shadow-amber/20">
+          ★
+        </div>
+        <span class="font-serif text-2xl font-bold tracking-tight text-cream">Star Coffee</span>
+      </a>
+      <div class="hidden md:flex items-center gap-8 font-medium text-sm text-warmgray">
+        <a href="index.html" class="hover:text-cream transition-colors">Home</a>
+        <a href="menu.html" class="text-cream font-semibold transition-colors">Menu</a>
+        <a href="contact.html" class="hover:text-cream transition-colors">Location & Contact</a>
+      </div>
+      <div class="flex items-center gap-4">
+        <a href="menu.html" class="hidden sm:inline-flex items-center justify-center px-5 py-2.5 rounded-xl bg-amber text-espresso font-semibold text-sm hover:bg-gold transition-colors shadow-lg shadow-amber/20">
+          Order Online
+        </a>
+        <button id="menu-btn" class="md:hidden w-10 h-10 rounded-xl glass flex flex-col items-center justify-center gap-1.5 focus:outline-none">
+          <span class="w-5 h-0.5 bg-cream"></span>
+          <span class="w-5 h-0.5 bg-cream"></span>
+        </button>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Mobile Menu Drawer -->
+  <div id="mobile-menu" class="fixed inset-0 z-40 bg-espresso/95 backdrop-blur-xl flex flex-col items-center justify-center gap-8 text-2xl font-serif translate-x-full transition-transform duration-300 md:hidden">
+    <a href="index.html" class="text-warmgray hover:text-cream">Home</a>
+    <a href="menu.html" class="text-amber">Menu</a>
+    <a href="contact.html" class="text-warmgray hover:text-cream">Location & Contact</a>
+    <a href="menu.html" class="px-8 py-3 rounded-xl bg-amber text-espresso font-sans font-semibold text-base">Order Online</a>
+  </div>
+
+  <!-- Menu Header -->
+  <section class="pt-36 pb-16 px-6 text-center max-w-4xl mx-auto space-y-4">
+    <span class="text-amber text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full glass inline-block">Artisanal Offerings</span>
+    <h1 class="font-serif text-5xl sm:text-6xl font-bold tracking-tight">Our Crafted Menu</h1>
+    <p class="text-warmgray text-lg max-w-xl mx-auto font-light">From single-origin pour-overs to velvety lattes and freshly baked morning pastries.</p>
+  </section>
+
+  <!-- Menu Categories -->
+  <section class="pb-28 px-6 max-w-7xl mx-auto space-y-20">
+
+    <!-- Category 1: Espresso & Coffee -->
+    <div>
+      <div class="flex items-center gap-4 mb-10">
+        <h2 class="font-serif text-3xl font-bold">Espresso & Brews</h2>
+        <div class="h-px bg-coffee flex-1"></div>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Item -->
+        <div class="glass p-6 rounded-2xl flex items-start justify-between gap-4 hover:border-amber/40 transition-colors">
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <h3 class="font-serif text-xl font-bold">Signature Star Latte</h3>
+              <span class="text-amber font-serif font-bold text-lg">$6.50</span>
+            </div>
+            <p class="text-warmgray text-sm leading-relaxed">Double shot of espresso, velvety microfoam, organic wildflower honey, and a dusting of cinnamon.</p>
+          </div>
+        </div>
+        <!-- Item -->
+        <div class="glass p-6 rounded-2xl flex items-start justify-between gap-4 hover:border-amber/40 transition-colors">
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <h3 class="font-serif text-xl font-bold">Ethiopian Pour Over</h3>
+              <span class="text-amber font-serif font-bold text-lg">$5.75</span>
+            </div>
+            <p class="text-warmgray text-sm leading-relaxed">Single origin Yirgacheffe brewed meticulously. Bright notes of bergamot, jasmine, and stone fruit.</p>
+          </div>
+        </div>
+        <!-- Item -->
+        <div class="glass p-6 rounded-2xl flex items-start justify-between gap-4 hover:border-amber/40 transition-colors">
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <h3 class="font-serif text-xl font-bold">Velvet Cold Brew</h3>
+              <span class="text-amber font-serif font-bold text-lg">$5.25</span>
+            </div>
+            <p class="text-warmgray text-sm leading-relaxed">Steeped for 18 hours in cold spring water. Smooth, low acidity with deep dark chocolate undertones.</p>
+          </div>
+        </div>
+        <!-- Item -->
+        <div class="glass p-6 rounded-2xl flex items-start justify-between gap-4 hover:border-amber/40 transition-colors">
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <h3 class="font-serif text-xl font-bold">Traditional Cortado</h3>
+              <span class="text-amber font-serif font-bold text-lg">$4.75</span>
+            </div>
+            <p class="text-warmgray text-sm leading-relaxed>Equal parts robust espresso and steamed textured milk, served in a classic glass.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Category 2: Specialty & Teas -->
+    <div>
+      <div class="flex items-center gap-4 mb-10">
+        <h2 class="font-serif text-3xl font-bold">Specialty & Matcha</h2>
+        <div class="h-px bg-coffee flex-1"></div>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="glass p-6 rounded-2xl flex items-start justify-between gap-4 hover:border-amber/40 transition-colors">
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <h3 class="font-serif text-xl font-bold">Ceremonial Matcha Latte</h3>
+              <span class="text-amber font-serif font-bold text-lg">$6.75</span>
+            </div>
+            <p class="text-warmgray text-sm leading-relaxed">Uji ceremonial grade green tea whisked smooth with steamed oat milk and vanilla bean syrup.</p>
+          </div>
+        </div>
+        <div class="glass p-6 rounded-2xl flex items-start justify-between gap-4 hover:border-amber/40 transition-colors">
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <h3 class="font-serif text-xl font-bold">Golden Turmeric Chai</h3>
+              <span class="text-amber font-serif font-bold text-lg">$6.00</span>
+            </div>
+            <p class="text-warmgray text-sm leading-relaxed">Spiced black tea infused with fresh turmeric root, ginger, cardamom, and steamed almond milk.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Category 3: Bakery & Pastries -->
+    <div>
+      <div class="flex items-center gap-4 mb-10">
+        <h2 class="font-serif text-3xl font-bold">Fresh Bakery</h2>
+        <div class="h-px bg-coffee flex-1"></div>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="glass p-6 rounded-2xl flex items-start justify-between gap-4 hover:border-amber/40 transition-colors">
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <h3 class="font-serif text-xl font-bold">Almond Butter Croissant</h3>
+              <span class="text-amber font-serif font-bold text-lg">$4.50</span>
+            </div>
+            <p class="text-warmgray text-sm leading-relaxed">Flaky, all-butter French croissant filled with rich almond frangipane and toasted sliced almonds.</p>
+          </div>
+        </div>
+        <div class="glass p-6 rounded-2xl flex items-start justify-between gap-4 hover:border-amber/40 transition-colors">
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <h3 class="font-serif text-xl font-bold">Cardamom Morning Bun</h3>
+              <span class="text-amber font-serif font-bold text-lg">$4.25</span>
+            </div>
+            <p class="text-warmgray text-sm leading-relaxed">Laminated brioche dough rolled with aromatic crushed cardamom, organic cane sugar, and orange zest.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- Footer -->
+  <footer class="py-12 px-6 border-t border-coffee/60 bg-coffee/40 text-center text-warmgray text-sm">
+    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-6">
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 rounded-lg bg-amber flex items-center justify-center text-espresso font-serif font-bold">★</div>
+        <span class="font-serif text-xl font-bold text-cream">Star Coffee</span>
+      </div>
+      <div>© 2026 Star Coffee Roasters. All rights reserved.</div>
+      <div class="flex items-center gap-6">
+        <a href="index.html" class="hover:text-cream transition-colors">Home</a>
+        <a href="menu.html" class="hover:text-cream transition-colors">Menu</a>
+        <a href="contact.html" class="hover:text-cream transition-colors">Contact</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const menuBtn = document.getElementById('menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+    menuBtn.addEventListener('click', () => {
+      mobileMenu.classList.toggle('translate-x-full');
+    });
+    const lenis = new Lenis({ duration: 1.2, easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)) });
+    function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
+    requestAnimationFrame(raf);
+  </script>
+</body>
+</html>

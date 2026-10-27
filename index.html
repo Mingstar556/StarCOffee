@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Star Coffee — Artisanal Roasters & Brews</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://unpkg.com/@studio-freight/lenis@1.0.29/dist/lenis.min.js"></script>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            espresso: '#1b1412',
+            coffee: '#2c221e',
+            amber: '#c88a58',
+            gold: '#e0b084',
+            cream: '#fcf8f2',
+            warmgray: '#a39690'
+          },
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            serif: ['"Playfair Display"', 'serif']
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #1b1412; color: #fcf8f2; overflow-x: hidden; }
+    .glass { background: rgba(44, 34, 30, 0.75); backdrop-filter: blur(12px); border: 1px solid rgba(200, 138, 88, 0.2); }
+    .hero-glow { background: radial-gradient(circle at 50% 30%, rgba(200, 138, 88, 0.25) 0%, rgba(27, 20, 18, 0) 70%); }
+  </style>
+</head>
+<body class="bg-espresso text-cream antialiased selection:bg-amber selection:text-espresso">
+
+  <!-- Navigation -->
+  <header class="fixed top-0 left-0 right-0 z-50 px-6 py-4">
+    <nav class="max-w-7xl mx-auto glass rounded-2xl px-6 py-4 flex items-center justify-between">
+      <a href="index.html" class="flex items-center gap-3 group">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber to-gold flex items-center justify-center text-espresso font-serif font-bold text-xl shadow-lg shadow-amber/20 group-hover:scale-105 transition-transform">
+          ★
+        </div>
+        <span class="font-serif text-2xl font-bold tracking-tight text-cream">Star Coffee</span>
+      </a>
+      <div class="hidden md:flex items-center gap-8 font-medium text-sm text-warmgray">
+        <a href="index.html" class="text-cream font-semibold transition-colors">Home</a>
+        <a href="menu.html" class="hover:text-cream transition-colors">Menu</a>
+        <a href="contact.html" class="hover:text-cream transition-colors">Location & Contact</a>
+      </div>
+      <div class="flex items-center gap-4">
+        <a href="menu.html" class="hidden sm:inline-flex items-center justify-center px-5 py-2.5 rounded-xl bg-amber text-espresso font-semibold text-sm hover:bg-gold transition-colors shadow-lg shadow-amber/20">
+          Order Online
+        </a>
+        <button id="menu-btn" class="md:hidden w-10 h-10 rounded-xl glass flex flex-col items-center justify-center gap-1.5 focus:outline-none">
+          <span class="w-5 h-0.5 bg-cream"></span>
+          <span class="w-5 h-0.5 bg-cream"></span>
+        </button>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Mobile Menu Drawer -->
+  <div id="mobile-menu" class="fixed inset-0 z-40 bg-espresso/95 backdrop-blur-xl flex flex-col items-center justify-center gap-8 text-2xl font-serif translate-x-full transition-transform duration-300 md:hidden">
+    <a href="index.html" class="text-amber">Home</a>
+    <a href="menu.html" class="text-warmgray hover:text-cream">Menu</a>
+    <a href="contact.html" class="text-warmgray hover:text-cream">Location & Contact</a>
+    <a href="menu.html" class="px-8 py-3 rounded-xl bg-amber text-espresso font-sans font-semibold text-base">Order Online</a>
+  </div>
+
+  <!-- Hero Section -->
+  <section class="relative min-h-screen flex items-center justify-center pt-28 pb-20 px-6 hero-glow">
+    <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+      <div class="lg:col-span-7 space-y-8 text-center lg:text-left">
+        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full glass text-amber text-xs font-semibold uppercase tracking-widest">
+          <span class="w-2 h-2 rounded-full bg-amber animate-pulse"></span> Artisanal Roast · Ethical Sourcing
+        </div>
+        <h1 class="font-serif text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.1]">
+          Where Every Sip is a <span class="text-transparent bg-clip-text bg-gradient-to-r from-amber to-gold">Masterpiece.</span>
+        </h1>
+        <p class="text-warmgray text-lg sm:text-xl max-w-xl mx-auto lg:mx-0 font-light leading-relaxed">
+          Welcome to Star Coffee. We handcraft exceptional coffee from sustainable highlands, roasted fresh daily in small batches for a rich, warm, unforgettable experience.
+        </p>
+        <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-2">
+          <a href="menu.html" class="w-full sm:w-auto px-8 py-4 rounded-2xl bg-amber text-espresso font-semibold text-base hover:bg-gold transition-all shadow-xl shadow-amber/20 text-center">
+            Explore Our Menu
+          </a>
+          <a href="contact.html" class="w-full sm:w-auto px-8 py-4 rounded-2xl glass text-cream font-semibold text-base hover:bg-coffee/80 transition-all text-center">
+            Visit Our Cafe
+          </a>
+        </div>
+        <!-- Stats -->
+        <div class="grid grid-cols-3 gap-6 pt-8 border-t border-coffee/60 max-w-lg mx-auto lg:mx-0">
+          <div>
+            <div class="font-serif text-3xl font-bold text-amber">100%</div>
+            <div class="text-xs text-warmgray uppercase tracking-wider mt-1">Arabica Beans</div>
+          </div>
+          <div>
+            <div class="font-serif text-3xl font-bold text-amber">12+</div>
+            <div class="text-xs text-warmgray uppercase tracking-wider mt-1">Single Origins</div>
+          </div>
+          <div>
+            <div class="font-serif text-3xl font-bold text-amber">4.9★</div>
+            <div class="text-xs text-warmgray uppercase tracking-wider mt-1">Customer Rating</div>
+          </div>
+        </div>
+      </div>
+      <!-- Hero Image / Visual -->
+      <div class="lg:col-span-5 relative">
+        <div class="relative mx-auto max-w-md lg:max-w-none">
+          <div class="absolute -inset-4 bg-gradient-to-tr from-amber/30 to-gold/10 rounded-3xl blur-2xl -z-10"></div>
+          <div class="rounded-3xl overflow-hidden glass p-3 shadow-2xl">
+            <img src="https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?q=80&w=1000&auto=format&fit=crop" alt="Pour over coffee" class="w-full h-[460px] object-cover rounded-2xl shadow-inner">
+          </div>
+          <!-- Floating badge -->
+          <div class="absolute -bottom-6 -left-6 glass px-6 py-4 rounded-2xl shadow-xl flex items-center gap-4">
+            <div class="w-12 h-12 rounded-xl bg-amber flex items-center justify-center text-espresso text-2xl">☕</div>
+            <div>
+              <div class="font-serif font-bold text-cream">Signature Brew</div>
+              <div class="text-xs text-warmgray">Ethiopian Yirgacheffe</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured Highlights -->
+  <section class="py-24 px-6 border-t border-coffee/40">
+    <div class="max-w-7xl mx-auto">
+      <div class="text-center max-w-2xl mx-auto mb-16 space-y-4">
+        <h2 class="text-amber text-xs font-semibold uppercase tracking-widest">The Star Coffee Experience</h2>
+        <h3 class="font-serif text-4xl font-bold">Crafted with Passion & Precision</h3>
+        <p class="text-warmgray">Every detail of your cup is meticulously dialed in for maximum warmth, body, and aroma.</p>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="glass p-8 rounded-3xl space-y-4 hover:border-amber/40 transition-colors group">
+          <div class="w-14 h-14 rounded-2xl bg-amber/10 flex items-center justify-center text-amber text-2xl group-hover:scale-110 transition-transform">🌱</div>
+          <h4 class="font-serif text-2xl font-bold">Ethical Sourcing</h4>
+          <p class="text-warmgray leading-relaxed text-sm">Direct trade relationships with high-altitude farmers ensuring fair wages and pristine bean quality.</p>
+        </div>
+        <div class="glass p-8 rounded-3xl space-y-4 hover:border-amber/40 transition-colors group">
+          <div class="w-14 h-14 rounded-2xl bg-amber/10 flex items-center justify-center text-amber text-2xl group-hover:scale-110 transition-transform">🔥</div>
+          <h4 class="font-serif text-2xl font-bold">Small-Batch Roast</h4>
+          <p class="text-warmgray leading-relaxed text-sm">Roasted daily in small quantities to unlock subtle flavor notes of chocolate, caramel, and berry.</p>
+        </div>
+        <div class="glass p-8 rounded-3xl space-y-4 hover:border-amber/40 transition-colors group">
+          <div class="w-14 h-14 rounded-2xl bg-amber/10 flex items-center justify-center text-amber text-2xl group-hover:scale-110 transition-transform">☕</div>
+          <h4 class="font-serif text-2xl font-bold">Expert Baristas</h4>
+          <p class="text-warmgray leading-relaxed text-sm">Trained masters of extraction, milk chemistry, and latte art dedicated to your perfect morning routine.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="py-12 px-6 border-t border-coffee/60 bg-coffee/40 text-center text-warmgray text-sm">
+    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-6">
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 rounded-lg bg-amber flex items-center justify-center text-espresso font-serif font-bold">★</div>
+        <span class="font-serif text-xl font-bold text-cream">Star Coffee</span>
+      </div>
+      <div>© 2026 Star Coffee Roasters. All rights reserved.</div>
+      <div class="flex items-center gap-6">
+        <a href="index.html" class="hover:text-cream transition-colors">Home</a>
+        <a href="menu.html" class="hover:text-cream transition-colors">Menu</a>
+        <a href="contact.html" class="hover:text-cream transition-colors">Contact</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const menuBtn = document.getElementById('menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+    menuBtn.addEventListener('click', () => {
+      mobileMenu.classList.toggle('translate-x-full');
+    });
+    const lenis = new Lenis({ duration: 1.2, easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)) });
+    function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
+    requestAnimationFrame(raf);
+  </script>
+</body>
+</html>
